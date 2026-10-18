@@ -210,38 +210,55 @@ class ExcelEditorActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        findViewById<View>(R.id.btnBold)?.setOnClickListener {
-            spreadsheetView.applyStyleToSelection { it.copy(bold = !it.bold) }
+        val sidebar = findViewById<com.retrobit.office.ui.ToolSidebar>(R.id.toolSidebar)
+        sidebar.setCategories(listOf(
+            com.retrobit.office.ui.ToolCategory("cell", R.drawable.ic_pi_frame, "SEL", listOf(
+                com.retrobit.office.ui.ToolItem("bold", R.drawable.ic_pi_bold, "Tebal"),
+                com.retrobit.office.ui.ToolItem("italic", R.drawable.ic_pi_italic, "Miring"),
+                com.retrobit.office.ui.ToolItem("text_color", R.drawable.ic_pi_colors_swatch, "Warna"),
+                com.retrobit.office.ui.ToolItem("cell_bg", R.drawable.ic_pi_image, "IsiSel"),
+                com.retrobit.office.ui.ToolItem("align_l", R.drawable.ic_pi_text_align_left, "Kiri"),
+                com.retrobit.office.ui.ToolItem("align_c", R.drawable.ic_pi_text_align_center, "Tengah"),
+                com.retrobit.office.ui.ToolItem("border", R.drawable.ic_pi_table, "Batas")
+            )),
+            com.retrobit.office.ui.ToolCategory("number", R.drawable.ic_pi_money, "ANGKA", listOf(
+                com.retrobit.office.ui.ToolItem("currency", R.drawable.ic_pi_money, "Rp"),
+                com.retrobit.office.ui.ToolItem("percent", R.drawable.ic_pi_percent, "%"),
+                com.retrobit.office.ui.ToolItem("sum", R.drawable.ic_pi_sigma, "Jumlah")
+            )),
+            com.retrobit.office.ui.ToolCategory("data", R.drawable.ic_pi_filter, "DATA", listOf(
+                com.retrobit.office.ui.ToolItem("chart", R.drawable.ic_pi_chart_bar_big, "Grafik"),
+                com.retrobit.office.ui.ToolItem("filter", R.drawable.ic_pi_filter, "Filter")
+            )),
+            com.retrobit.office.ui.ToolCategory("file", R.drawable.ic_pi_save, "BERKAS", listOf(
+                com.retrobit.office.ui.ToolItem("print", R.drawable.ic_pi_printer, "Cetak"),
+                com.retrobit.office.ui.ToolItem("save", R.drawable.ic_pi_save, "Simpan")
+            ))
+        ))
+        sidebar.onToolSelected = { _, toolId -> handleTool(toolId) }
+    }
+
+    private fun handleTool(toolId: String) {
+        when (toolId) {
+            "bold" -> spreadsheetView.applyStyleToSelection { it.copy(bold = !it.bold) }
+            "italic" -> spreadsheetView.applyStyleToSelection { it.copy(italic = !it.italic) }
+            "text_color" -> showColorPicker(false)
+            "cell_bg" -> showColorPicker(true)
+            "align_l" -> spreadsheetView.applyStyleToSelection { it.copy(alignment = CellAlignment.LEFT) }
+            "align_c" -> spreadsheetView.applyStyleToSelection { it.copy(alignment = CellAlignment.CENTER) }
+            "border" -> spreadsheetView.applyStyleToSelection { it.copy(border = CellBorder(top = true, bottom = true, left = true, right = true)) }
+            "currency" -> spreadsheetView.applyStyleToSelection { it.copy(numberFormat = NumberFormat.CURRENCY_IDR) }
+            "percent" -> spreadsheetView.applyStyleToSelection { it.copy(numberFormat = NumberFormat.PERCENT) }
+            "sum" -> {
+                formulaBar.setText("=SUM()")
+                formulaBar.setSelection(5)
+                formulaBar.requestFocus()
+            }
+            "chart" -> showChartDialog()
+            "filter" -> showFilterDialog()
+            "print" -> printSheet()
+            "save" -> saveFile()
         }
-        findViewById<View>(R.id.btnItalic)?.setOnClickListener {
-            spreadsheetView.applyStyleToSelection { it.copy(italic = !it.italic) }
-        }
-        findViewById<View>(R.id.btnBgColor)?.setOnClickListener { showColorPicker(true) }
-        findViewById<View>(R.id.btnTextColor)?.setOnClickListener { showColorPicker(false) }
-        findViewById<View>(R.id.btnAlignLeft)?.setOnClickListener {
-            spreadsheetView.applyStyleToSelection { it.copy(alignment = CellAlignment.LEFT) }
-        }
-        findViewById<View>(R.id.btnAlignCenter)?.setOnClickListener {
-            spreadsheetView.applyStyleToSelection { it.copy(alignment = CellAlignment.CENTER) }
-        }
-        findViewById<View>(R.id.btnBorder)?.setOnClickListener {
-            spreadsheetView.applyStyleToSelection { it.copy(border = CellBorder(top = true, bottom = true, left = true, right = true)) }
-        }
-        findViewById<View>(R.id.btnCurrency)?.setOnClickListener {
-            spreadsheetView.applyStyleToSelection { it.copy(numberFormat = NumberFormat.CURRENCY_IDR) }
-        }
-        findViewById<View>(R.id.btnPercent)?.setOnClickListener {
-            spreadsheetView.applyStyleToSelection { it.copy(numberFormat = NumberFormat.PERCENT) }
-        }
-        findViewById<View>(R.id.btnSum)?.setOnClickListener {
-            formulaBar.setText("=SUM()")
-            formulaBar.setSelection(5)
-            formulaBar.requestFocus()
-        }
-        findViewById<View>(R.id.btnChart)?.setOnClickListener { showChartDialog() }
-        findViewById<View>(R.id.btnFilter)?.setOnClickListener { showFilterDialog() }
-        findViewById<View>(R.id.btnPrintExcel)?.setOnClickListener { printSheet() }
-        findViewById<View>(R.id.btnSaveExcel)?.setOnClickListener { saveFile() }
     }
 
     private fun showColorPicker(isBg: Boolean) {
@@ -264,8 +281,7 @@ class ExcelEditorActivity : AppCompatActivity() {
     }
 
     private fun updateStyleIndicators(style: CellStyle) {
-        findViewById<View>(R.id.btnBold)?.alpha = if (style.bold) 1f else 0.5f
-        findViewById<View>(R.id.btnItalic)?.alpha = if (style.italic) 1f else 0.5f
+        // indikator gaya ditangani sidebar (state tombol kategori)
     }
 
     private fun saveFile() {

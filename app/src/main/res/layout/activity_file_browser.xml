@@ -15,9 +15,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/bg"
-            app:title="File saya"
-            app:titleTextColor="@color/ink_900"
+            android:background="@color/ink_900"
+            app:title="FILE SAYA"
+            app:titleTextColor="@color/invert_ink"
             app:titleTextAppearance="@style/TextAppearance.App.Title" />
 
         <TextView

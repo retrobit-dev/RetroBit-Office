@@ -38,8 +38,8 @@
         <!-- Main Launcher -->
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize"
             android:exported="true"
-            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout|smallestScreenSize"
             android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTop">
             <intent-filter>
@@ -78,11 +78,13 @@
 
         <activity
             android:name=".ui.FileBrowserActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize"
             android:exported="false"
             android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:name=".ui.SettingsActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize"
             android:exported="false"
             android:parentActivityName=".ui.MainActivity" />
 

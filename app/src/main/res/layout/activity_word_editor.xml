@@ -5,267 +5,223 @@
     android:layout_height="match_parent"
     android:background="@color/bg">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/surface"
-        app:elevation="0dp">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/surface"
-            app:title="Word"
-            app:titleTextColor="@color/ink_900"
-            app:titleTextAppearance="@style/TextAppearance.App.Title" />
-
-        <!-- Ribbon tabs -->
-        <com.retrobit.office.word.WordToolbar
-            android:id="@+id/wordToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/surface" />
-
-        <!-- Mode segmented -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@color/surface"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp">
-
-            <RadioGroup
-                android:id="@+id/modeToggle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_segmented"
-                android:padding="3dp">
-
-                <RadioButton
-                    android:id="@+id/modeHandwriting"
-                    android:layout_width="0dp"
-                    android:layout_height="32dp"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:background="@drawable/bg_segment_item"
-                    android:gravity="center"
-                    android:text="  Tulis → Teks"
-                    android:textSize="11sp"
-                    android:textColor="@color/seg_tint"
-                    android:drawableStart="@drawable/ic_pi_pencil"
-                    android:checked="true" />
-
-                <RadioButton
-                    android:id="@+id/modeFreeDraw"
-                    android:layout_width="0dp"
-                    android:layout_height="32dp"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:background="@drawable/bg_segment_item"
-                    android:gravity="center"
-                    android:text="  Gambar Bebas"
-                    android:textSize="11sp"
-                    android:textColor="@color/seg_tint"
-                    android:drawableStart="@drawable/ic_pi_brush" />
-            </RadioGroup>
-
-            <ImageButton
-                android:id="@+id/btnPrint"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_pi_printer"
-                app:tint="@color/ink_900"
-                android:layout_marginStart="6dp"
-                android:contentDescription="Cetak" />
-        </LinearLayout>
-
-        <!-- Handwriting controls -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@color/brand_soft"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLanguage"
-                style="@style/Widget.App.Pill"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:text="ID"
-                android:textStyle="bold"
-                app:icon="@drawable/ic_pi_book_open" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnConvertNow"
-                style="@style/Widget.App.Pill"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:text="Konversi"
-                app:icon="@drawable/ic_pi_check" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnClearInk"
-                style="@style/Widget.App.Pill"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:text="Hapus"
-                app:icon="@drawable/ic_pi_trash" />
-
-            <TextView
-                android:id="@+id/stylusStatus"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="Mode: Tulis → Teks"
-                android:textSize="10sp"
-                android:textColor="@color/brand"
-                android:layout_marginStart="8dp" />
-
-            <SeekBar
-                android:id="@+id/seekStrokeWidth"
-                android:layout_width="72dp"
-                android:layout_height="wrap_content"
-                android:max="20"
-                android:progress="6"
-                android:progressTint="@color/brand"
-                android:thumbTint="@color/brand" />
-        </LinearLayout>
-
-        <!-- Color palette -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/surface"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:id="@+id/colorPalette"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="8dp" />
-        </HorizontalScrollView>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- Editor -->
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:fillViewport="true"
-        android:clipToPadding="false"
-        android:paddingBottom="90dp">
+        android:orientation="horizontal">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="800dp">
+        <!-- SIDEBAR KIRI: rail kategori + panel tool -->
+        <com.retrobit.office.ui.ToolSidebar
+            android:id="@+id/toolSidebar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
 
-            <com.retrobit.office.word.WordEditorView
-                android:id="@+id/wordEditorView"
+        <!-- AREA KERJA -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Top bar ala terminal -->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/Widget.App.Toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/bg" />
+                android:layout_height="44dp"
+                android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
+                app:title="WORD"
+                app:titleTextColor="@color/invert_ink"
+                app:titleTextAppearance="@style/TextAppearance.App.Title" />
 
-            <com.retrobit.office.core.stylus.HandwritingView
-                android:id="@+id/handwritingView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#0A2E6BE6" />
-
-            <com.retrobit.office.core.stylus.FreeDrawView
-                android:id="@+id/freeDrawView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
-
+            <!-- Strip alat tulis -->
             <LinearLayout
-                android:id="@+id/candidateBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@color/surface"
-                android:padding="8dp"
-                android:elevation="8dp"
-                android:visibility="gone"
-                android:layout_gravity="bottom" />
+                android:gravity="center_vertical"
+                android:background="@color/panel"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp">
 
-            <!-- Ink tools -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="10dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLanguage"
+                    style="@style/Widget.App.Pill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="ID"
+                    app:icon="@drawable/ic_pi_book_open" />
 
-                <ImageButton
-                    android:id="@+id/btnPen"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:src="@drawable/ic_pi_pencil"
-                    android:background="@drawable/bg_circle"
-                    android:padding="10dp"
-                    app:tint="@color/brand"
-                    android:layout_marginBottom="8dp"
-                    android:contentDescription="Pena" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnConvertNow"
+                    style="@style/Widget.App.Pill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="6dp"
+                    android:text="Konversi"
+                    app:icon="@drawable/ic_pi_check" />
 
-                <ImageButton
-                    android:id="@+id/btnEraser"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:src="@drawable/ic_pi_eraser"
-                    android:background="@drawable/bg_circle"
-                    android:padding="10dp"
-                    app:tint="@color/ink_900"
-                    android:layout_marginBottom="8dp"
-                    android:contentDescription="Penghapus" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnClearInk"
+                    style="@style/Widget.App.Pill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="6dp"
+                    android:text="Hapus"
+                    app:icon="@drawable/ic_pi_trash" />
 
-                <ImageButton
-                    android:id="@+id/btnUndoInk"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:src="@drawable/ic_pi_undo"
-                    android:background="@drawable/bg_circle"
-                    android:padding="10dp"
-                    app:tint="@color/ink_900"
-                    android:layout_marginBottom="8dp"
-                    android:contentDescription="Urungkan" />
+                <SeekBar
+                    android:id="@+id/seekStrokeWidth"
+                    android:layout_width="64dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:max="20"
+                    android:progress="6"
+                    android:progressTint="@color/ink_900"
+                    android:thumbTint="@color/ink_900" />
 
-                <ImageButton
-                    android:id="@+id/btnClearFree"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:src="@drawable/ic_pi_trash"
-                    android:background="@drawable/bg_circle"
-                    android:padding="10dp"
-                    app:tint="@color/danger"
-                    android:contentDescription="Hapus semua" />
+                <HorizontalScrollView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/colorPalette"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
             </LinearLayout>
-        </FrameLayout>
-    </androidx.core.widget.NestedScrollView>
+
+            <!-- Strip mode -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@color/surface"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp">
+
+                <RadioGroup
+                    android:id="@+id/modeToggle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:background="@drawable/bg_segmented"
+                    android:padding="2dp">
+
+                    <RadioButton
+                        android:id="@+id/modeHandwriting"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:background="@drawable/bg_segment_item"
+                        android:gravity="center"
+                        android:text="Tulis→Teks"
+                        android:textSize="9sp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/seg_tint"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/modeFreeDraw"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:background="@drawable/bg_segment_item"
+                        android:gravity="center"
+                        android:text="Gambar"
+                        android:textSize="9sp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/seg_tint" />
+                </RadioGroup>
+
+                <ImageButton
+                    android:id="@+id/btnPrint"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="6dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_pi_printer"
+                    app:tint="@color/ink_900"
+                    android:contentDescription="Cetak" />
+            </LinearLayout>
+
+            <!-- Dokumen -->
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:clipToPadding="false"
+                android:paddingBottom="70dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="760dp">
+
+                    <com.retrobit.office.word.WordEditorView
+                        android:id="@+id/wordEditorView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/bg" />
+
+                    <com.retrobit.office.core.stylus.HandwritingView
+                        android:id="@+id/handwritingView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#141B1B18" />
+
+                    <com.retrobit.office.core.stylus.FreeDrawView
+                        android:id="@+id/freeDrawView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/candidateBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@color/surface"
+                        android:padding="8dp"
+                        android:visibility="gone"
+                        android:layout_gravity="bottom" />
+                </FrameLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <!-- Status strip -->
+            <TextView
+                android:id="@+id/stylusStatus"
+                android:layout_width="match_parent"
+                android:layout_height="22dp"
+                android:background="@color/ink_900"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="10dp"
+                android:text="MODE: TULIS→TEKS | M-PENCIL READY"
+                android:textSize="9sp"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:textColor="@color/invert_ink" />
+        </LinearLayout>
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="12dp"
         android:src="@drawable/ic_pi_save"
-        app:tint="@color/surface"
-        app:backgroundTint="@color/brand"
+        app:tint="@color/invert_ink"
+        app:backgroundTint="@color/ink_900"
+        app:shapeAppearanceOverlay="@style/SquareFabShape"
         android:contentDescription="Simpan" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -273,11 +229,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
-        android:layout_margin="16dp"
+        android:layout_margin="12dp"
+        android:layout_marginStart="82dp"
         android:src="@drawable/ic_pi_share"
         app:fabSize="mini"
         app:tint="@color/ink_900"
         app:backgroundTint="@color/surface"
+        app:shapeAppearanceOverlay="@style/SquareFabShape"
         android:contentDescription="Bagikan" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

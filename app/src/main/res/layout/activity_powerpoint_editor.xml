@@ -5,182 +5,138 @@
     android:layout_height="match_parent"
     android:background="@color/bg">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/surface"
-        app:elevation="0dp">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+    <!-- SIDEBAR KIRI -->
+    <com.retrobit.office.ui.ToolSidebar
+        android:id="@+id/toolSidebar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            style="@style/Widget.App.Toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/surface"
-            app:title="PowerPoint"
-            app:titleTextColor="@color/ink_900"
+            android:layout_height="44dp"
+            android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
+            app:title="POWERPOINT"
+            app:titleTextColor="@color/invert_ink"
             app:titleTextAppearance="@style/TextAppearance.App.Title" />
 
-        <!-- Toolbar row 1: slide -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/surface"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="8dp">
-
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnAddSlide" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Slide" app:icon="@drawable/ic_pi_plus" />
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnDuplicate" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Duplikat" app:icon="@drawable/ic_pi_copy" />
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnDeleteSlide" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Hapus" app:icon="@drawable/ic_pi_trash" />
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnTheme" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Tema" app:icon="@drawable/ic_pi_colors_swatch" />
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnTransition" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Transisi" app:icon="@drawable/ic_pi_refresh" />
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <!-- Toolbar row 2: insert -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/surface"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="8dp"
-                android:paddingBottom="4dp">
-
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnAddText" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Teks" app:icon="@drawable/ic_pi_text_start_t" />
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnAddShape" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Bentuk" app:icon="@drawable/ic_pi_shapes" />
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnAddTable" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Tabel" app:icon="@drawable/ic_pi_table" />
-                <com.google.android.material.button.MaterialButton android:id="@+id/btnAddChart" style="@style/Widget.App.ToolButton" android:layout_width="wrap_content" android:layout_height="42dp" android:text="Grafik" app:icon="@drawable/ic_pi_chart_bar_big" />
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <!-- Mode + ink tools -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@color/brand_soft"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp">
-
-            <RadioGroup
-                android:id="@+id/modeTogglePpt"
-                android:layout_width="0dp"
-                android:layout_height="32dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_segmented"
-                android:padding="3dp">
-
-                <RadioButton
-                    android:id="@+id/modeSelect"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:background="@drawable/bg_segment_item"
-                    android:gravity="center"
-                    android:text="Pilih"
-                    android:textSize="11sp"
-                    android:textColor="@color/seg_tint"
-                    android:checked="true" />
-
-                <RadioButton
-                    android:id="@+id/modeDraw"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:background="@drawable/bg_segment_item"
-                    android:gravity="center"
-                    android:text="Gambar"
-                    android:textSize="11sp"
-                    android:textColor="@color/seg_tint" />
-
-                <RadioButton
-                    android:id="@+id/modeInkText"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:background="@drawable/bg_segment_item"
-                    android:gravity="center"
-                    android:text="Teks"
-                    android:textSize="11sp"
-                    android:textColor="@color/seg_tint" />
-            </RadioGroup>
-
-            <ImageButton android:id="@+id/btnPenPpt" android:layout_width="36dp" android:layout_height="36dp" android:src="@drawable/ic_pi_pencil" android:background="?attr/selectableItemBackgroundBorderless" app:tint="@color/brand" android:layout_marginStart="4dp" android:contentDescription="Pena" />
-            <ImageButton android:id="@+id/btnEraserPpt" android:layout_width="36dp" android:layout_height="36dp" android:src="@drawable/ic_pi_eraser" android:background="?attr/selectableItemBackgroundBorderless" app:tint="@color/ink_900" android:layout_marginStart="2dp" android:contentDescription="Penghapus" />
-            <ImageButton android:id="@+id/btnUndoPpt" android:layout_width="36dp" android:layout_height="36dp" android:src="@drawable/ic_pi_undo" android:background="?attr/selectableItemBackgroundBorderless" app:tint="@color/ink_900" android:layout_marginStart="2dp" android:contentDescription="Urungkan" />
-            <ImageButton android:id="@+id/btnClearPpt" android:layout_width="36dp" android:layout_height="36dp" android:src="@drawable/ic_pi_trash" android:background="?attr/selectableItemBackgroundBorderless" app:tint="@color/danger" android:layout_marginStart="2dp" android:contentDescription="Hapus coretan" />
-        </LinearLayout>
-
-        <!-- Slide thumbnails -->
+        <!-- Thumbnail strip -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/slideThumbnails"
             android:layout_width="match_parent"
-            android:layout_height="86dp"
-            android:background="@color/surface"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="8dp" />
-    </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="76dp"
+            android:background="@color/panel"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="6dp" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:padding="14dp"
-        android:clipToPadding="false">
-
-        <com.retrobit.office.powerpoint.SlideEditorView
-            android:id="@+id/slideEditorView"
+        <!-- Strip mode -->
+        <RadioGroup
+            android:id="@+id/modeTogglePpt"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_segmented"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="4dp"
+            android:padding="2dp">
 
-        <com.retrobit.office.core.stylus.FreeDrawView
-            android:id="@+id/freeDrawOverlay"
+            <RadioButton
+                android:id="@+id/modeSelect"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:background="@drawable/bg_segment_item"
+                android:gravity="center"
+                android:text="Pilih"
+                android:textSize="9sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/seg_tint"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/modeDraw"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:background="@drawable/bg_segment_item"
+                android:gravity="center"
+                android:text="Gambar"
+                android:textSize="9sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/seg_tint" />
+
+            <RadioButton
+                android:id="@+id/modeInkText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:background="@drawable/bg_segment_item"
+                android:gravity="center"
+                android:text="Teks"
+                android:textSize="9sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/seg_tint" />
+        </RadioGroup>
+
+        <!-- Slide editor -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:clipToPadding="false">
 
-        <com.retrobit.office.core.stylus.HandwritingView
-            android:id="@+id/handwritingOverlayPpt"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="#0A2E6BE6" />
+            <com.retrobit.office.powerpoint.SlideEditorView
+                android:id="@+id/slideEditorView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
 
-        <!-- Navigation -->
+            <com.retrobit.office.core.stylus.FreeDrawView
+                android:id="@+id/freeDrawOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+            <com.retrobit.office.core.stylus.HandwritingView
+                android:id="@+id/handwritingOverlayPpt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:background="#141B1B18" />
+        </FrameLayout>
+
+        <!-- Status strip: navigasi -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_gravity="bottom|center"
-            android:background="@drawable/bg_row"
-            android:elevation="6dp"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="6dp"
-            android:layout_marginBottom="6dp">
+            android:background="@color/ink_900"
+            android:paddingHorizontal="6dp">
 
             <ImageButton
                 android:id="@+id/btnPrev"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_pi_chevron_left"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="@color/ink_900"
+                app:tint="@color/invert_ink"
                 android:contentDescription="Sebelumnya" />
 
             <TextView
@@ -188,18 +144,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1 / 1"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="@color/ink_900"
-                android:layout_marginHorizontal="10dp" />
+                android:textSize="10sp"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:textColor="@color/invert_ink"
+                android:layout_marginHorizontal="6dp" />
 
             <ImageButton
                 android:id="@+id/btnNext"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_pi_chevron_right"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="@color/ink_900"
+                app:tint="@color/invert_ink"
                 android:contentDescription="Berikutnya" />
 
             <TextView
@@ -208,36 +165,41 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:text="Tidak ada seleksi"
-                android:textSize="10sp"
+                android:text="TIDAK ADA SELEKSI"
+                android:textSize="8sp"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.06"
                 android:textColor="@color/ink_400"
-                android:layout_marginStart="10dp" />
+                android:layout_marginStart="8dp" />
         </LinearLayout>
-    </FrameLayout>
+    </LinearLayout>
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="72dp"
+        android:layout_margin="12dp"
         android:src="@drawable/ic_pi_play"
-        app:tint="@color/surface"
-        app:backgroundTint="@color/orange"
+        app:tint="@color/invert_ink"
+        app:backgroundTint="@color/ink_900"
+        app:shapeAppearanceOverlay="@style/SquareFabShape"
         android:contentDescription="Slideshow" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabSavePpt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="16dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="12dp"
         android:layout_marginBottom="72dp"
         android:src="@drawable/ic_pi_save"
         app:fabSize="mini"
         app:tint="@color/ink_900"
         app:backgroundTint="@color/surface"
+        app:shapeAppearanceOverlay="@style/SquareFabShape"
         android:contentDescription="Simpan" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

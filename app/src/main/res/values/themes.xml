@@ -1,70 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<style name="Theme.RetroBitOffice" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/brand</item>
-        <item name="colorPrimaryContainer">@color/brand_soft</item>
-        <item name="colorSecondary">@color/brand</item>
+
+    <style name="Theme.RetroBitOffice" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/ink_900</item>
+        <item name="colorOnPrimary">@color/invert_ink</item>
+        <item name="colorPrimaryContainer">@color/panel</item>
+        <item name="colorOnPrimaryContainer">@color/ink_900</item>
+        <item name="colorSecondary">@color/ink_600</item>
+        <item name="colorOnSecondary">@color/invert_ink</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/ink_900</item>
-        <item name="android:windowBackground">@color/bg</item>
-        <item name="android:statusBarColor">@color/bg</item>
-        <item name="android:navigationBarColor">@color/surface</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="colorOnSurfaceVariant">@color/ink_600</item>
+        <item name="colorOutline">@color/line</item>
+        <item name="colorError">@color/danger</item>
+        <item name="android:colorBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/ink_900</item>
+        <item name="android:navigationBarColor">@color/panel</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="fontFamily">monospace</item>
+        <item name="android:textColorPrimary">@color/ink_900</item>
+        <item name="android:textColorSecondary">@color/ink_600</item>
     </style>
 
-    <!-- Toolbar flat putih -->
-    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
-        <item name="android:background">@color/surface</item>
-        <item name="titleTextColor">@color/ink_900</item>
-        <item name="titleTextAppearance">@style/TextAppearance.App.Title</item>
-    </style>
-
+    <!-- Title mono uppercase ala terminal -->
     <style name="TextAppearance.App.Title" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/ink_900</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/invert_ink</item>
     </style>
 
-    <!-- Chip / pill sederhana -->
-    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Assist">
+    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:background">@color/ink_900</item>
+        <item name="titleTextColor">@color/invert_ink</item>
+        <item name="titleTextAppearance">@style/TextAppearance.App.Title</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <!-- Chip kotak 1px ala panel e-paper -->
+    <style name="Widget.App.Chip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/chip_bg</item>
         <item name="android:textColor">@color/ink_900</item>
-        <item name="chipMinHeight">32dp</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/line</item>
+        <item name="chipCornerRadius">2dp</item>
     </style>
 
-    <!-- Tombol toolbar editor (icon + label kecil) -->
+    <!-- Tombol tool: kotak, border, label mono kecil -->
     <style name="Widget.App.ToolButton" parent="Widget.Material3.Button.TextButton">
-        <item name="android:textColor">@color/ink_900</item>
-        <item name="android:textSize">10sp</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-        <item name="android:paddingTop">6dp</item>
-        <item name="android:paddingBottom">6dp</item>
-        <item name="iconTint">@color/ink_900</item>
-        <item name="iconSize">20dp</item>
-        <item name="iconGravity">textStart</item>
-        <item name="iconPadding">6dp</item>
         <item name="backgroundTint">@color/surface</item>
+        <item name="strokeColor">@color/line</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">2dp</item>
+        <item name="android:textColor">@color/ink_900</item>
+        <item name="android:textSize">9sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="iconTint">@color/ink_900</item>
+        <item name="iconPadding">6dp</item>
         <item name="rippleColor">@color/brand_soft</item>
-        <item name="cornerRadius">10dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
     </style>
 
     <style name="Widget.App.Pill" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="strokeColor">@color/line</item>
-        <item name="strokeWidth">1dp</item>
-        <item name="cornerRadius">20dp</item>
-        <item name="android:textColor">@color/ink_900</item>
-        <item name="android:textSize">11sp</item>
-        <item name="iconTint">@color/ink_900</item>
-        <item name="iconSize">16dp</item>
         <item name="backgroundTint">@color/surface</item>
-        <item name="android:minHeight">34dp</item>
+        <item name="strokeColor">@color/ink_900</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">2dp</item>
+        <item name="android:textColor">@color/ink_900</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="iconTint">@color/ink_900</item>
+        <item name="rippleColor">@color/brand_soft</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
     </style>
 
+    <!-- Tombol rail sidebar -->
+    <style name="Widget.App.RailButton" parent="Widget.Material3.Button.TextButton">
+        <item name="backgroundTint">@color/panel</item>
+        <item name="android:textColor">@color/ink_600</item>
+        <item name="android:textSize">8sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="iconTint">@color/ink_600</item>
+        <item name="rippleColor">@color/brand_soft</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
 
+    <!-- FAB kotak ala cyberdeck -->
+    <style name="Widget.App.ExtendedFAB" parent="Widget.Material3.ExtendedFloatingActionButton">
+        <item name="backgroundTint">@color/ink_900</item>
+        <item name="android:textColor">@color/invert_ink</item>
+        <item name="iconTint">@color/invert_ink</item>
+        <item name="cornerRadius">2dp</item>
+    </style>
+
+    <style name="SquareFabShape" parent="">
+        <item name="cornerSize">2dp</item>
+    </style>
 
     <style name="NavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/brand_soft</item>

@@ -1,33 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- GenOffice-inspired clean tokens -->
-    <color name="bg">#F6F7F9</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="ink_900">#17181A</color>
-    <color name="ink_600">#64676C</color>
-    <color name="ink_400">#9AA0A6</color>
-    <color name="line">#E6E8EB</color>
-    <color name="line_soft">#EFF1F4</color>
-    <color name="chip_bg">#F0F2F5</color>
-    <color name="brand">#2E6BE6</color>
-    <color name="brand_soft">#EAF1FE</color>
-    <color name="brand_press">#2456BD</color>
-    <color name="green">#1FA971</color>
-    <color name="green_soft">#E7F6F0</color>
-    <color name="orange">#E8590C</color>
-    <color name="orange_soft">#FDEEE4</color>
-    <color name="danger">#E5484D</color>
-    <color name="paper">#FFFFFF</color>
-    <color name="paper_shadow">#22000000</color>
+    <!-- Retro cyberdeck / grayscale e-paper palette -->
+    <color name="bg">#DDDDD4</color>            <!-- device chrome -->
+    <color name="surface">#F4F4EC</color>       <!-- e-paper -->
+    <color name="panel">#E6E6DC</color>         <!-- sidebar / strips -->
+    <color name="chip_bg">#E6E6DC</color>
 
-    <!-- compat lama -->
-    <color name="primary">#2E6BE6</color>
-    <color name="primary_dark">#2456BD</color>
-    <color name="accent">#FBBC04</color>
-    <color name="background">#F6F7F9</color>
-    <color name="word_blue">#2E6BE6</color>
-    <color name="excel_green">#1FA971</color>
-    <color name="ppt_orange">#E8590C</color>
-    <color name="text_primary">#17181A</color>
-    <color name="text_secondary">#64676C</color>
-    <color name="divider">#E6E8EB</color>
+    <color name="ink_900">#1B1B18</color>
+    <color name="ink_600">#56564E</color>
+    <color name="ink_400">#8E8E82</color>
+    <color name="line">#BFBFB2</color>
+    <color name="line_soft">#D6D6CA</color>
+
+    <!-- accent = black inversion -->
+    <color name="brand">#1B1B18</color>
+    <color name="brand_soft">#D9D9CE</color>
+    <color name="invert_bg">#1B1B18</color>
+    <color name="invert_ink">#F4F4EC</color>
+
+    <!-- muted functional (hampir grayscale) -->
+    <color name="green">#4F5F46</color>
+    <color name="orange">#8A6F3F</color>
+    <color name="danger">#8B3A2E</color>
+    <color name="blue">#4A5A6B</color>
+
+    <!-- legacy compat -->
+    <color name="primary">#1B1B18</color>
+    <color name="purple_500">#1B1B18</color>
+    <color name="purple_700">#1B1B18</color>
+    <color name="teal_200">#8E8E82</color>
+    <color name="white">#F4F4EC</color>
+    <color name="black">#1B1B18</color>
+    <color name="word">#1B1B18</color>
+    <color name="excel">#1B1B18</color>
+    <color name="ppt">#1B1B18</color>
+    <color name="ink">#1B1B18</color>
+    <color name="ink_teal">#4F5F46</color>
+    <color name="paper">#F4F4EC</color>
+    <color name="accent">#1B1B18</color>
+    <color name="note_yellow">#E8E4C9</color>
+    <color name="error">#8B3A2E</color>
+    <color name="success">#4F5F46</color>
 </resources>

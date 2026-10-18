@@ -92,35 +92,34 @@ class PowerPointEditorActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        findViewById<View>(R.id.btnAddSlide)?.setOnClickListener {
-            presentation.addSlide()
-            slideThumbnailAdapter.notifyItemInserted(presentation.slides.size - 1)
-            showSlide(presentation.slides.size - 1)
-        }
-        findViewById<View>(R.id.btnDuplicate)?.setOnClickListener {
-            presentation.duplicateSlide(presentation.currentIndex)
-            slideThumbnailAdapter.notifyDataSetChanged()
-            showSlide(presentation.currentIndex + 1)
-        }
-        findViewById<View>(R.id.btnDeleteSlide)?.setOnClickListener {
-            if (presentation.slides.size > 1) {
-                presentation.slides.removeAt(presentation.currentIndex)
-                showSlide((presentation.currentIndex - 1).coerceAtLeast(0))
-                slideThumbnailAdapter.notifyDataSetChanged()
-            } else Toast.makeText(this, "Minimal 1 slide", Toast.LENGTH_SHORT).show()
-        }
-        findViewById<View>(R.id.btnAddText)?.setOnClickListener { slideView.addTextBox() }
-        findViewById<View>(R.id.btnAddShape)?.setOnClickListener { showShapePicker() }
-        findViewById<View>(R.id.btnAddTable)?.setOnClickListener {
-            slideView.slide.elements.add(SlideElement.Table())
-            slideView.invalidate()
-        }
-        findViewById<View>(R.id.btnAddChart)?.setOnClickListener {
-            slideView.slide.elements.add(SlideElement.Chart())
-            slideView.invalidate()
-        }
-        findViewById<View>(R.id.btnTheme)?.setOnClickListener { showThemePicker() }
-        findViewById<View>(R.id.btnTransition)?.setOnClickListener { showTransitionPicker() }
+        val sidebar = findViewById<com.retrobit.office.ui.ToolSidebar>(R.id.toolSidebar)
+        sidebar.setCategories(listOf(
+            com.retrobit.office.ui.ToolCategory("slide", R.drawable.ic_pi_presentation, "SLIDE", listOf(
+                com.retrobit.office.ui.ToolItem("add_slide", R.drawable.ic_pi_plus, "Baru"),
+                com.retrobit.office.ui.ToolItem("duplicate", R.drawable.ic_pi_copy, "Duplikat"),
+                com.retrobit.office.ui.ToolItem("delete_slide", R.drawable.ic_pi_trash, "Hapus"),
+                com.retrobit.office.ui.ToolItem("theme", R.drawable.ic_pi_colors_swatch, "Tema"),
+                com.retrobit.office.ui.ToolItem("transition", R.drawable.ic_pi_refresh, "Transisi")
+            )),
+            com.retrobit.office.ui.ToolCategory("insert", R.drawable.ic_pi_plus, "SISIPKAN", listOf(
+                com.retrobit.office.ui.ToolItem("text", R.drawable.ic_pi_text_start_t, "Teks"),
+                com.retrobit.office.ui.ToolItem("shape", R.drawable.ic_pi_shapes, "Bentuk"),
+                com.retrobit.office.ui.ToolItem("table", R.drawable.ic_pi_table, "Tabel"),
+                com.retrobit.office.ui.ToolItem("chart", R.drawable.ic_pi_chart_bar_big, "Grafik")
+            )),
+            com.retrobit.office.ui.ToolCategory("draw", R.drawable.ic_pi_brush, "CORET", listOf(
+                com.retrobit.office.ui.ToolItem("pen", R.drawable.ic_pi_pencil, "Pena"),
+                com.retrobit.office.ui.ToolItem("eraser", R.drawable.ic_pi_eraser, "Penghapus"),
+                com.retrobit.office.ui.ToolItem("undo_ink", R.drawable.ic_pi_undo, "Urungkan"),
+                com.retrobit.office.ui.ToolItem("clear_ink", R.drawable.ic_pi_trash, "Hapus")
+            )),
+            com.retrobit.office.ui.ToolCategory("view", R.drawable.ic_pi_eye, "TAMPILAN", listOf(
+                com.retrobit.office.ui.ToolItem("play", R.drawable.ic_pi_play, "Slideshow"),
+                com.retrobit.office.ui.ToolItem("print", R.drawable.ic_pi_printer, "Cetak"),
+                com.retrobit.office.ui.ToolItem("save", R.drawable.ic_pi_save, "Simpan")
+            ))
+        ))
+        sidebar.onToolSelected = { _, toolId -> handleTool(toolId) }
 
         // Text editing
         slideView.onTextEditRequested = { textBox ->
@@ -128,14 +127,55 @@ class PowerPointEditorActivity : AppCompatActivity() {
         }
         slideView.onElementSelected = { el ->
             findViewById<TextView>(R.id.selectionInfo)?.text = when (el) {
-                is SlideElement.TextBox -> "Teks: ${el.text.take(20)}"
-                is SlideElement.Shape -> "Bentuk: ${el.type}"
-                else -> if (el == null) "Tidak ada seleksi" else el::class.simpleName
+                is SlideElement.TextBox -> "TEKS: ${el.text.take(18).uppercase()}"
+                is SlideElement.Shape -> "BENTUK: ${el.type}"
+                else -> if (el == null) "TIDAK ADA SELEKSI" else (el::class.simpleName ?: "").uppercase()
             }
         }
 
         findViewById<View>(R.id.btnPrev)?.setOnClickListener { showSlide(presentation.currentIndex - 1) }
         findViewById<View>(R.id.btnNext)?.setOnClickListener { showSlide(presentation.currentIndex + 1) }
+    }
+
+    private fun handleTool(toolId: String) {
+        when (toolId) {
+            "add_slide" -> {
+                presentation.addSlide()
+                slideThumbnailAdapter.notifyItemInserted(presentation.slides.size - 1)
+                showSlide(presentation.slides.size - 1)
+            }
+            "duplicate" -> {
+                presentation.duplicateSlide(presentation.currentIndex)
+                slideThumbnailAdapter.notifyDataSetChanged()
+                showSlide(presentation.currentIndex + 1)
+            }
+            "delete_slide" -> {
+                if (presentation.slides.size > 1) {
+                    presentation.slides.removeAt(presentation.currentIndex)
+                    showSlide((presentation.currentIndex - 1).coerceAtLeast(0))
+                    slideThumbnailAdapter.notifyDataSetChanged()
+                } else Toast.makeText(this, "Minimal 1 slide", Toast.LENGTH_SHORT).show()
+            }
+            "theme" -> showThemePicker()
+            "transition" -> showTransitionPicker()
+            "text" -> slideView.addTextBox()
+            "shape" -> showShapePicker()
+            "table" -> {
+                slideView.slide.elements.add(SlideElement.Table())
+                slideView.invalidate()
+            }
+            "chart" -> {
+                slideView.slide.elements.add(SlideElement.Chart())
+                slideView.invalidate()
+            }
+            "pen" -> freeDrawView.setTool(com.retrobit.office.core.stylus.StylusTool.PEN)
+            "eraser" -> freeDrawView.setTool(com.retrobit.office.core.stylus.StylusTool.ERASER)
+            "undo_ink" -> freeDrawView.undoLast()
+            "clear_ink" -> freeDrawView.clearCanvas()
+            "play" -> startSlideshow()
+            "print" -> printPresentation()
+            "save" -> savePresentation()
+        }
     }
 
     private fun setupInkModes() {
@@ -163,10 +203,6 @@ class PowerPointEditorActivity : AppCompatActivity() {
             slideView.addTextBox(text)
             Toast.makeText(this, "Teks: $text", Toast.LENGTH_SHORT).show()
         }
-        findViewById<View>(R.id.btnPenPpt)?.setOnClickListener { freeDrawView.setTool(com.retrobit.office.core.stylus.StylusTool.PEN) }
-        findViewById<View>(R.id.btnEraserPpt)?.setOnClickListener { freeDrawView.setTool(com.retrobit.office.core.stylus.StylusTool.ERASER) }
-        findViewById<View>(R.id.btnUndoPpt)?.setOnClickListener { freeDrawView.undoLast() }
-        findViewById<View>(R.id.btnClearPpt)?.setOnClickListener { freeDrawView.clearCanvas() }
     }
 
     private fun setupFab() {

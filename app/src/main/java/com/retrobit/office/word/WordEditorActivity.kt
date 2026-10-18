@@ -31,7 +31,7 @@ class WordEditorActivity : AppCompatActivity() {
     private lateinit var editorView: WordEditorView
     private lateinit var handwritingView: HandwritingView
     private lateinit var freeDrawView: FreeDrawView
-    private lateinit var toolbar: WordToolbar
+    private lateinit var sidebar: com.retrobit.office.ui.ToolSidebar
     private lateinit var modeToggle: RadioGroup
     private lateinit var stylusStatus: TextView
 
@@ -79,7 +79,7 @@ class WordEditorActivity : AppCompatActivity() {
         editorView = findViewById(R.id.wordEditorView)
         handwritingView = findViewById(R.id.handwritingView)
         freeDrawView = findViewById(R.id.freeDrawView)
-        toolbar = findViewById(R.id.wordToolbar)
+        sidebar = findViewById(R.id.toolSidebar)
         modeToggle = findViewById(R.id.modeToggle)
         stylusStatus = findViewById(R.id.stylusStatus)
 
@@ -102,7 +102,7 @@ class WordEditorActivity : AppCompatActivity() {
             override fun onStrokeEnded(stroke: InkStroke, allStrokes: List<InkStroke>) {}
             override fun onStylusStateChanged(isStylus: Boolean) {
                 stylusStatus.text = if (isStylus) "M-Pencil aktif" else "Mode sentuh"
-                stylusStatus.setTextColor(if (isStylus) Color.parseColor("#137333") else Color.GRAY)
+                stylusStatus.setTextColor(if (isStylus) Color.parseColor("#F4F4EC") else Color.parseColor("#8E8E82"))
             }
             override fun onModeChanged(mode: InputMode) {}
             override fun onHandwritingResult(text: String, candidates: List<String>) {
@@ -170,14 +170,6 @@ class WordEditorActivity : AppCompatActivity() {
                 container.addView(btn)
             }
         }
-        findViewById<View>(R.id.btnUndoInk)?.setOnClickListener { freeDrawView.undoLast() }
-        findViewById<View>(R.id.btnClearFree)?.setOnClickListener { freeDrawView.clearCanvas() }
-        findViewById<View>(R.id.btnEraser)?.setOnClickListener {
-            freeDrawView.setTool(StylusTool.ERASER)
-        }
-        findViewById<View>(R.id.btnPen)?.setOnClickListener {
-            freeDrawView.setTool(StylusTool.PEN)
-        }
         // Stroke width
         findViewById<SeekBar>(R.id.seekStrokeWidth)?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(s: SeekBar?, v: Int, fromUser: Boolean) {
@@ -191,36 +183,110 @@ class WordEditorActivity : AppCompatActivity() {
     }
 
     private fun setupWordToolbar() {
-        toolbar.onFormattingChanged = { action ->
-            when (action) {
-                is WordToolbar.WordToolbarAction.Bold -> { pushUndo(); editorView.applyFormatting(bold = action.enabled) }
-                is WordToolbar.WordToolbarAction.Italic -> { pushUndo(); editorView.applyFormatting(italic = action.enabled) }
-                is WordToolbar.WordToolbarAction.Underline -> { pushUndo(); editorView.applyFormatting(underline = action.enabled) }
-                is WordToolbar.WordToolbarAction.Align -> { pushUndo(); editorView.applyFormatting(alignment = action.align) }
-                is WordToolbar.WordToolbarAction.FontColor -> { pushUndo(); editorView.applyFormatting(color = action.color) }
-                is WordToolbar.WordToolbarAction.FontSize -> { pushUndo(); editorView.applyFormatting(fontSize = action.sizePt) }
-                is WordToolbar.WordToolbarAction.Bullet -> {
-                    pushUndo()
-                    val para = document.paragraphs.getOrNull(0)
-                    para?.bullet = action.style
-                    editorView.invalidate()
-                }
-                is WordToolbar.WordToolbarAction.Print -> printDocument()
-                is WordToolbar.WordToolbarAction.Save -> saveDocument()
-                is WordToolbar.WordToolbarAction.InsertImage -> pickImage()
-                is WordToolbar.WordToolbarAction.InsertTable -> insertTableDialog()
-                is WordToolbar.WordToolbarAction.Undo -> undo()
-                is WordToolbar.WordToolbarAction.Redo -> redo()
-                is WordToolbar.WordToolbarAction.WordCount -> showWordCount()
-                is WordToolbar.WordToolbarAction.PageLayout -> showMarginsDialog()
-                is WordToolbar.WordToolbarAction.PaperSize -> showPaperSizeDialog()
-                is WordToolbar.WordToolbarAction.ToggleOrientation -> toggleOrientation()
-                is WordToolbar.WordToolbarAction.Margins -> showMarginsDialog()
-                is WordToolbar.WordToolbarAction.ZoomIn -> editorView.setZoom(editorView.getZoom() * 1.2f)
-                is WordToolbar.WordToolbarAction.ZoomOut -> editorView.setZoom(editorView.getZoom() / 1.2f)
-                is WordToolbar.WordToolbarAction.Pen -> findViewById<RadioButton>(R.id.modeFreeDraw).isChecked = true
+        sidebar.setCategories(listOf(
+            com.retrobit.office.ui.ToolCategory("home", R.drawable.ic_pi_heading, "BERANDA", listOf(
+                com.retrobit.office.ui.ToolItem("bold", R.drawable.ic_pi_bold, "Tebal"),
+                com.retrobit.office.ui.ToolItem("italic", R.drawable.ic_pi_italic, "Miring"),
+                com.retrobit.office.ui.ToolItem("underline", R.drawable.ic_pi_underline, "GarisBwh"),
+                com.retrobit.office.ui.ToolItem("size_up", R.drawable.ic_pi_type_size, "A+"),
+                com.retrobit.office.ui.ToolItem("size_down", R.drawable.ic_pi_type_size, "A-"),
+                com.retrobit.office.ui.ToolItem("align_l", R.drawable.ic_pi_text_align_left, "Kiri"),
+                com.retrobit.office.ui.ToolItem("align_c", R.drawable.ic_pi_text_align_center, "Tengah"),
+                com.retrobit.office.ui.ToolItem("align_r", R.drawable.ic_pi_text_align_right, "Kanan"),
+                com.retrobit.office.ui.ToolItem("align_j", R.drawable.ic_pi_text_align_justify, "Rata"),
+                com.retrobit.office.ui.ToolItem("bullet", R.drawable.ic_pi_bulletlist, "Poin"),
+                com.retrobit.office.ui.ToolItem("numbers", R.drawable.ic_pi_numbers, "Angka"),
+                com.retrobit.office.ui.ToolItem("color", R.drawable.ic_pi_colors_swatch, "Warna")
+            )),
+            com.retrobit.office.ui.ToolCategory("insert", R.drawable.ic_pi_plus, "SISIPKAN", listOf(
+                com.retrobit.office.ui.ToolItem("table", R.drawable.ic_pi_table, "Tabel"),
+                com.retrobit.office.ui.ToolItem("image", R.drawable.ic_pi_image, "Gambar")
+            )),
+            com.retrobit.office.ui.ToolCategory("draw", R.drawable.ic_pi_brush, "CORET", listOf(
+                com.retrobit.office.ui.ToolItem("pen", R.drawable.ic_pi_pencil, "Pena"),
+                com.retrobit.office.ui.ToolItem("eraser", R.drawable.ic_pi_eraser, "Penghapus"),
+                com.retrobit.office.ui.ToolItem("undo_ink", R.drawable.ic_pi_undo, "Urungkan"),
+                com.retrobit.office.ui.ToolItem("clear_ink", R.drawable.ic_pi_trash, "Hapus")
+            )),
+            com.retrobit.office.ui.ToolCategory("layout", R.drawable.ic_pi_layout, "TATA LETAK", listOf(
+                com.retrobit.office.ui.ToolItem("paper", R.drawable.ic_pi_page, "Kertas"),
+                com.retrobit.office.ui.ToolItem("orientation", R.drawable.ic_pi_orientation, "Orientasi"),
+                com.retrobit.office.ui.ToolItem("margins", R.drawable.ic_pi_margin, "Margin")
+            )),
+            com.retrobit.office.ui.ToolCategory("review", R.drawable.ic_pi_book_open, "TINJAU", listOf(
+                com.retrobit.office.ui.ToolItem("undo", R.drawable.ic_pi_undo, "Urungkan"),
+                com.retrobit.office.ui.ToolItem("redo", R.drawable.ic_pi_redo, "Ulangi"),
+                com.retrobit.office.ui.ToolItem("wordcount", R.drawable.ic_pi_book_open, "Hitung")
+            )),
+            com.retrobit.office.ui.ToolCategory("view", R.drawable.ic_pi_eye, "TAMPILAN", listOf(
+                com.retrobit.office.ui.ToolItem("zoom_in", R.drawable.ic_pi_zoom_in, "Perbesar"),
+                com.retrobit.office.ui.ToolItem("zoom_out", R.drawable.ic_pi_zoom_out, "Perkecil"),
+                com.retrobit.office.ui.ToolItem("print", R.drawable.ic_pi_printer, "Cetak"),
+                com.retrobit.office.ui.ToolItem("save", R.drawable.ic_pi_save, "Simpan")
+            ))
+        ))
+        sidebar.onToolSelected = { _, toolId -> handleTool(toolId) }
+    }
+
+    private fun handleTool(toolId: String) {
+        when (toolId) {
+            "bold" -> { pushUndo(); editorView.applyFormatting(bold = true) }
+            "italic" -> { pushUndo(); editorView.applyFormatting(italic = true) }
+            "underline" -> { pushUndo(); editorView.applyFormatting(underline = true) }
+            "size_up" -> { pushUndo(); editorView.applyFormatting(fontSize = 14f) }
+            "size_down" -> { pushUndo(); editorView.applyFormatting(fontSize = 10f) }
+            "align_l" -> { pushUndo(); editorView.applyFormatting(alignment = Alignment.LEFT) }
+            "align_c" -> { pushUndo(); editorView.applyFormatting(alignment = Alignment.CENTER) }
+            "align_r" -> { pushUndo(); editorView.applyFormatting(alignment = Alignment.RIGHT) }
+            "align_j" -> { pushUndo(); editorView.applyFormatting(alignment = Alignment.JUSTIFY) }
+            "bullet" -> {
+                pushUndo()
+                document.paragraphs.getOrNull(0)?.bullet = BulletStyle.BULLET
+                editorView.invalidate()
             }
+            "numbers" -> {
+                pushUndo()
+                document.paragraphs.getOrNull(0)?.bullet = BulletStyle.NUMBER
+                editorView.invalidate()
+            }
+            "color" -> showFontColorDialog()
+            "table" -> insertTableDialog()
+            "image" -> pickImage()
+            "pen" -> {
+                findViewById<RadioButton>(R.id.modeFreeDraw).isChecked = true
+                freeDrawView.setTool(StylusTool.PEN)
+            }
+            "eraser" -> freeDrawView.setTool(StylusTool.ERASER)
+            "undo_ink" -> freeDrawView.undoLast()
+            "clear_ink" -> freeDrawView.clearCanvas()
+            "paper" -> showPaperSizeDialog()
+            "orientation" -> toggleOrientation()
+            "margins" -> showMarginsDialog()
+            "undo" -> undo()
+            "redo" -> redo()
+            "wordcount" -> showWordCount()
+            "zoom_in" -> editorView.setZoom(editorView.getZoom() * 1.2f)
+            "zoom_out" -> editorView.setZoom(editorView.getZoom() / 1.2f)
+            "print" -> printDocument()
+            "save" -> saveDocument()
         }
+    }
+
+    private fun showFontColorDialog() {
+        val colors = arrayOf("Hitam", "Biru", "Merah", "Hijau")
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Warna teks")
+            .setItems(colors) { _, which ->
+                val c = when (which) {
+                    0 -> Color.parseColor("#1B1B18")
+                    1 -> Color.parseColor("#2E4A7A")
+                    2 -> Color.parseColor("#8B3A2E")
+                    else -> Color.parseColor("#4F5F46")
+                }
+                pushUndo()
+                editorView.applyFormatting(color = c)
+            }
+            .show()
     }
 
     // ---------- Undo / Redo (snapshot) ----------
