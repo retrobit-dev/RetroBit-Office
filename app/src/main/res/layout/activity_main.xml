@@ -52,7 +52,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Huawei M-Pencil Siap"
-                        android:textColor="white"
+                        android:textColor="#FFFFFF"
                         android:textStyle="bold"
                         android:textSize="15sp" />
 
@@ -122,7 +122,7 @@
                         <TextView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:background="white"
+                            android:background="#FFFFFF"
                             android:gravity="center"
                             android:text="W"
                             android:textColor="@color/word_blue"
@@ -133,7 +133,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Word"
-                            android:textColor="white"
+                            android:textColor="#FFFFFF"
                             android:textStyle="bold"
                             android:layout_marginTop="8dp" />
 
@@ -142,7 +142,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="⊕ Dokumen"
-                            android:textColor="white"
+                            android:textColor="#FFFFFF"
                             android:textSize="11sp"
                             android:background="#33FFFFFF"
                             android:padding="6dp"
@@ -169,7 +169,7 @@
                         <TextView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:background="white"
+                            android:background="#FFFFFF"
                             android:gravity="center"
                             android:text="X"
                             android:textColor="@color/excel_green"
@@ -180,7 +180,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Excel"
-                            android:textColor="white"
+                            android:textColor="#FFFFFF"
                             android:textStyle="bold"
                             android:layout_marginTop="8dp" />
 
@@ -189,7 +189,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="⊕ Spreadsheet"
-                            android:textColor="white"
+                            android:textColor="#FFFFFF"
                             android:textSize="11sp"
                             android:background="#33FFFFFF"
                             android:padding="6dp"
@@ -216,7 +216,7 @@
                         <TextView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:background="white"
+                            android:background="#FFFFFF"
                             android:gravity="center"
                             android:text="P"
                             android:textColor="@color/ppt_orange"
@@ -227,7 +227,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="PowerPoint"
-                            android:textColor="white"
+                            android:textColor="#FFFFFF"
                             android:textStyle="bold"
                             android:layout_marginTop="8dp" />
 
@@ -236,7 +236,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="⊕ Presentasi"
-                            android:textColor="white"
+                            android:textColor="#FFFFFF"
                             android:textSize="11sp"
                             android:background="#33FFFFFF"
                             android:padding="6dp"
