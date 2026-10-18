@@ -26,7 +26,7 @@ class DocxImporter {
                 p.runs.forEach { r ->
                     para.runs.add(
                         TextRun(
-                            text = r.text(0) ?: "",
+                            text = r.text() ?: "",
                             bold = r.isBold,
                             italic = r.isItalic,
                             underline = r.underline != org.apache.poi.xwpf.usermodel.UnderlinePatterns.NONE,

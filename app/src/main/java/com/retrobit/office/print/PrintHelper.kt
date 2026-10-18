@@ -77,7 +77,7 @@ class PrintHelper(private val context: Context) {
     private fun printViaAdapter(jobName: String, html: String) {
         val adapter = object : PrintDocumentAdapter() {
             override fun onLayout(oldAttrs: PrintAttributes?, newAttrs: PrintAttributes?, cancellation: android.os.CancellationSignal?, resultCallback: LayoutResultCallback?, extras: android.os.Bundle?) {
-                if (cancellation?.isCancelled == true) {
+                if (cancellation?.isCancelled() == true) {
                     resultCallback?.onLayoutCancelled()
                     return
                 }
@@ -120,7 +120,7 @@ class PrintHelper(private val context: Context) {
     fun printBitmap(jobName: String, bitmap: Bitmap) {
         val adapter = object : PrintDocumentAdapter() {
             override fun onLayout(oldAttributes: PrintAttributes?, newAttributes: PrintAttributes?, cancellationSignal: android.os.CancellationSignal?, callback: LayoutResultCallback?, extras: android.os.Bundle?) {
-                if (cancellationSignal?.isCancelled == true) { callback?.onLayoutCancelled(); return }
+                if (cancellationSignal?.isCancelled() == true) { callback?.onLayoutCancelled(); return }
                 val info = PrintDocumentInfo.Builder(jobName).setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT).setPageCount(1).build()
                 callback?.onLayoutFinished(info, true)
             }
@@ -170,6 +170,7 @@ class PrintHelper(private val context: Context) {
  * Background print service placeholder (untuk printer discovery)
  */
 class OfficePrintService : android.printservice.PrintService() {
+    override fun onCreatePrinterDiscoverySession(): android.printservice.PrinterDiscoverySession? = null
     override fun onPrintJobQueued(printJob: android.printservice.PrintJob?) {
         printJob?.complete()
     }

@@ -29,7 +29,7 @@ class SlideEditorView @JvmOverloads constructor(
     private var isDragging = false
 
     private val bgPaint = Paint()
-    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val textPaint = android.text.TextPaint(Paint.ANTI_ALIAS_FLAG)
     private val selectionPaint = Paint().apply { color = Color.parseColor("#1A73E8"); style = Paint.Style.STROKE; strokeWidth = 4f; pathEffect = DashPathEffect(floatArrayOf(12f, 12f), 0f) }
     private val handlePaint = Paint().apply { color = Color.parseColor("#1A73E8") }
 

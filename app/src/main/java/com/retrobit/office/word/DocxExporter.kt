@@ -20,7 +20,6 @@ class DocxExporter(private val context: Context) {
         val props = doc.properties.coreProperties
         props.title = document.title
         props.creator = document.author
-        props.created = java.util.Date()
 
         // Page settings
         val ctDoc = doc.document.body
@@ -49,7 +48,8 @@ class DocxExporter(private val context: Context) {
 
         // Header
         if (document.headers.isNotEmpty()) {
-            val header = doc.createHeader(XWPFHeaderFooterPolicy.DEFAULT)
+            val policy = doc.createHeaderFooterPolicy()
+            val header = policy.createHeader(org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy.DEFAULT)
             document.headers.forEach { h ->
                 val p = header.createParagraph()
                 p.alignment = ParagraphAlignment.CENTER
@@ -61,7 +61,8 @@ class DocxExporter(private val context: Context) {
         }
         // Footer with page number
         if (document.footers.isNotEmpty() || true) {
-            val footer = doc.createFooter(XWPFHeaderFooterPolicy.DEFAULT)
+            val policy2 = doc.createHeaderFooterPolicy()
+            val footer = policy2.createFooter(org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy.DEFAULT)
             val p = footer.createParagraph()
             p.alignment = ParagraphAlignment.CENTER
             val r = p.createRun()
@@ -111,8 +112,8 @@ class DocxExporter(private val context: Context) {
                     r.fontSize = run.fontSizePt.toInt()
                     if (run.underline) r.underline = UnderlinePatterns.SINGLE
                     if (run.strikethrough) r.isStrikeThrough = true
-                    if (run.subscript) r.subscript = VerticalAlign.SUBSCRIPT
-                    if (run.superscript) r.subscript = VerticalAlign.SUPERSCRIPT
+                    if (run.subscript) r.setSubscript(VerticalAlign.SUBSCRIPT)
+                    if (run.superscript) r.setSubscript(VerticalAlign.SUPERSCRIPT)
                     // Color as hex
                     val hex = String.format("%06X", 0xFFFFFF and run.color)
                     r.setColor(hex)
