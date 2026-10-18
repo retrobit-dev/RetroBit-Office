@@ -6,6 +6,11 @@
 
 ---
 
+## 🎨 Desain & Ikon
+- **UI/UX clean** terinspirasi **GenOffice**: chrome tipis abu-abu terang, permukaan putih "kertas", kartu ber-shadow halus, toolbar kompak, home = pencarian + file terbaru, tombol aksi berbentuk chip/pill.
+- **Semua ikon = pixel-art** dari [pixelarticons](https://pixelarticons.com) v2.4.2 (MIT) yang dikonversi ke Android VectorDrawable (`tools/svg2vd.py`), ditambah 12 ikon custom bergaya sama (bold, italic, underline, tabel, slideshow, sigma, dll). Tidak ada emoji/ikon Material di UI.
+- Token desain di `values/colors.xml` (bg `#F6F7F9`, brand `#2E6BE6`, hijau `#1FA971`, oranye `#E8590C`), tipografi ringkas.
+
 ## ✨ Fitur Utama
 
 ### 📝 Word (Dokumen .docx)
@@ -81,7 +86,7 @@ RetroBit-Office/
 │   │   │   │   ├── DocxExporter.kt      # Export .docx (Apache POI)
 │   │   │   │   ├── DocxImporter.kt      # Import .docx
 │   │   │   │   ├── WordEditorView.kt    # Page layout + StaticLayout + cursor
-│   │   │   │   ├── WordToolbar.kt       # 6 tabs dengan MaterialButton
+│   │   │   │   ├── WordToolbar.kt       # 6 tab ribbon, ikon pixel-art, aksi lengkap
 │   │   │   │   └── WordEditorActivity.kt # Main: mode toggle, handwriting, save/print/share
 │   │   │   ├── excel/
 │   │   │   │   ├── SpreadsheetModel.kt  # Sheet, Cell, FormulaEngine (SUM/AVERAGE/etc)
@@ -102,7 +107,7 @@ RetroBit-Office/
 │   │   └── res/
 │   │       ├── layout/                  # activity_main, word/excel/ppt editor, etc
 │   │       ├── values/                  # strings, colors, themes
-│   │       ├── drawable/                # icons, bg_chip, bg_thumb
+│   │       ├── drawable/                # 79 ikon pixel ic_pi_* + shape bg_*
 │   │       ├── menu/                    # word/excel/ppt menus, bottom_nav
 │   │       └── xml/file_paths.xml       # FileProvider
 │   ├── build.gradle.kts                 # Dependencies: POI, ML Kit, HMS, Material3
