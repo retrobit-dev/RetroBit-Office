@@ -65,6 +65,15 @@ class MainActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = recentAdapter
 
+        // Search filter
+        findViewById<android.widget.EditText>(R.id.searchInput)?.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                recentAdapter.filter(s?.toString() ?: "")
+            }
+        })
+
         findViewById<BottomNavigationView>(R.id.bottomNav)?.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> true
@@ -89,7 +98,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCreateDialog() {
-        val options = arrayOf("📄 Dokumen Word (.docx)", "📊 Spreadsheet Excel (.xlsx)", "📽 Presentasi PowerPoint (.pptx)")
+        val options = arrayOf("Dokumen Word (.docx)", "Spreadsheet Excel (.xlsx)", "Presentasi PowerPoint (.pptx)")
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Buat Baru")
             .setItems(options) { _, which ->
@@ -122,44 +131,32 @@ class MainActivity : AppCompatActivity() {
 
     // Adapter
     class RecentFilesAdapter(private var files: List<File>, private val onClick: (File) -> Unit) : RecyclerView.Adapter<RecentFilesAdapter.VH>() {
+        private var allFiles: List<File> = files
         inner class VH(val view: View) : RecyclerView.ViewHolder(view)
         override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): VH {
-            val card = CardView(parent.context).apply {
-                radius = 16f; cardElevation = 4f
-                layoutParams = RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT).apply { setMargins(16,8,16,8) }
-            }
-            val row = android.widget.LinearLayout(parent.context).apply {
-                orientation = android.widget.LinearLayout.HORIZONTAL
-                setPadding(24,24,24,24)
-            }
-            val icon = TextView(parent.context).apply { textSize = 28f; layoutParams = android.widget.LinearLayout.LayoutParams(80, 80) }
-            val col = android.widget.LinearLayout(parent.context).apply { orientation = android.widget.LinearLayout.VERTICAL; layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f) }
-            val title = TextView(parent.context).apply { textSize = 14f; setTextColor(Color.parseColor("#202124")); maxLines = 1 }
-            val sub = TextView(parent.context).apply { textSize = 11f; setTextColor(Color.GRAY) }
-            col.addView(title); col.addView(sub)
-            row.addView(icon); row.addView(col)
-            card.addView(row)
-            return VH(card)
+            val view = android.view.LayoutInflater.from(parent.context).inflate(R.layout.item_recent, parent, false)
+            return VH(view)
         }
         override fun onBindViewHolder(holder: VH, position: Int) {
             val f = files[position]
-            val card = holder.view as CardView
-            val row = card.getChildAt(0) as android.widget.LinearLayout
-            val icon = row.getChildAt(0) as TextView
-            val col = row.getChildAt(1) as android.widget.LinearLayout
-            val title = col.getChildAt(0) as TextView
-            val sub = col.getChildAt(1) as TextView
+            val icon = holder.view.findViewById<android.widget.ImageView>(R.id.recentIcon)
+            val title = holder.view.findViewById<TextView>(R.id.recentTitle)
+            val sub = holder.view.findViewById<TextView>(R.id.recentSub)
             title.text = f.name
             val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
-            sub.text = "${f.length()/1024} KB • ${sdf.format(Date(f.lastModified()))}"
-            icon.text = when {
-                f.name.endsWith(".docx") -> "📄"
-                f.name.endsWith(".xlsx") -> "📊"
-                else -> "📽"
+            sub.text = "${'$'}{f.length()/1024} KB • ${'$'}{sdf.format(Date(f.lastModified()))}"
+            when {
+                f.name.endsWith(".docx") -> { icon.setImageResource(R.drawable.ic_pi_file_text); icon.setColorFilter(Color.parseColor("#2E6BE6")) }
+                f.name.endsWith(".xlsx") -> { icon.setImageResource(R.drawable.ic_pi_numbers); icon.setColorFilter(Color.parseColor("#1FA971")) }
+                else -> { icon.setImageResource(R.drawable.ic_pi_presentation); icon.setColorFilter(Color.parseColor("#E8590C")) }
             }
             holder.view.setOnClickListener { onClick(f) }
         }
         override fun getItemCount() = files.size
-        fun update(newFiles: List<File>) { files = newFiles; notifyDataSetChanged() }
+        fun update(newFiles: List<File>) { allFiles = newFiles; files = newFiles; notifyDataSetChanged() }
+        fun filter(query: String) {
+            files = if (query.isBlank()) allFiles else allFiles.filter { it.name.contains(query, ignoreCase = true) }
+            notifyDataSetChanged()
+        }
     }
 }

@@ -3,74 +3,86 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1F3F4">
+    android:background="@color/bg">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Word - RetroBit Office" />
+            android:background="@color/surface"
+            app:title="Word"
+            app:titleTextColor="@color/ink_900"
+            app:titleTextAppearance="@style/TextAppearance.App.Title" />
 
-        <!-- Word Toolbar Tabs -->
+        <!-- Ribbon tabs -->
         <com.retrobit.office.word.WordToolbar
             android:id="@+id/wordToolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@color/surface" />
 
-        <!-- Mode Toggle -->
+        <!-- Mode segmented -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="#FFFFFF"
-            android:padding="8dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:background="@color/surface"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp">
 
             <RadioGroup
                 android:id="@+id/modeToggle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@drawable/bg_segmented"
+                android:padding="3dp">
 
                 <RadioButton
                     android:id="@+id/modeHandwriting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="✍️ Tulisan → Teks"
-                    android:checked="true"
-                    android:textSize="12sp" />
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:background="@drawable/bg_segment_item"
+                    android:gravity="center"
+                    android:text="  Tulis → Teks"
+                    android:textSize="11sp"
+                    android:textColor="@color/seg_tint"
+                    android:drawableStart="@drawable/ic_pi_pencil"
+                    android:checked="true" />
 
                 <RadioButton
                     android:id="@+id/modeFreeDraw"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🎨 Bebas"
-                    android:textSize="12sp"
-                    android:layout_marginStart="12dp" />
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:background="@drawable/bg_segment_item"
+                    android:gravity="center"
+                    android:text="  Gambar Bebas"
+                    android:textSize="11sp"
+                    android:textColor="@color/seg_tint"
+                    android:drawableStart="@drawable/ic_pi_brush" />
             </RadioGroup>
-
-            <TextView
-                android:id="@+id/stylusStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mode: Tulisan → Teks"
-                android:textSize="11sp"
-                android:textColor="@color/primary"
-                android:background="#E8F0FE"
-                android:padding="8dp" />
 
             <ImageButton
                 android:id="@+id/btnPrint"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Print" />
+                android:src="@drawable/ic_pi_printer"
+                app:tint="@color/ink_900"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Cetak" />
         </LinearLayout>
 
         <!-- Handwriting controls -->
@@ -78,66 +90,84 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="#E8F0FE"
-            android:padding="6dp">
+            android:gravity="center_vertical"
+            android:background="@color/brand_soft"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLanguage"
+                style="@style/Widget.App.Pill"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:text="ID"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:textSize="11sp" />
+                android:textStyle="bold"
+                app:icon="@drawable/ic_pi_book_open" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConvertNow"
+                style="@style/Widget.App.Pill"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                android:text="→ Teks"
-                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_marginStart="8dp"
-                android:textSize="11sp" />
+                android:text="Konversi"
+                app:icon="@drawable/ic_pi_check" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClearInk"
+                style="@style/Widget.App.Pill"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                android:text="Hapus Ink"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_marginStart="8dp"
-                android:textSize="11sp" />
+                android:text="Hapus"
+                app:icon="@drawable/ic_pi_trash" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+            <TextView
+                android:id="@+id/stylusStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="Mode: Tulis → Teks"
+                android:textSize="10sp"
+                android:textColor="@color/brand"
+                android:layout_marginStart="8dp" />
 
             <SeekBar
                 android:id="@+id/seekStrokeWidth"
-                android:layout_width="80dp"
+                android:layout_width="72dp"
                 android:layout_height="wrap_content"
                 android:max="20"
-                android:progress="6" />
+                android:progress="6"
+                android:progressTint="@color/brand"
+                android:thumbTint="@color/brand" />
         </LinearLayout>
 
         <!-- Color palette -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF">
+            android:background="@color/surface"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:id="@+id/colorPalette"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="6dp" />
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp" />
         </HorizontalScrollView>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Editor Area -->
+    <!-- Editor -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="90dp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -148,74 +178,81 @@
                 android:id="@+id/wordEditorView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#F1F3F4" />
+                android:background="@color/bg" />
 
-            <!-- Handwriting overlay (transparent, captures stylus to convert) -->
             <com.retrobit.office.core.stylus.HandwritingView
                 android:id="@+id/handwritingView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#0D000000" />
+                android:background="#0A2E6BE6" />
 
-            <!-- Free draw overlay -->
             <com.retrobit.office.core.stylus.FreeDrawView
                 android:id="@+id/freeDrawView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="@android:color/transparent" />
+                android:visibility="gone" />
 
-            <!-- Candidate bar -->
             <LinearLayout
                 android:id="@+id/candidateBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="#E8F0FE"
+                android:background="@color/surface"
                 android:padding="8dp"
+                android:elevation="8dp"
                 android:visibility="gone"
                 android:layout_gravity="bottom" />
 
-            <!-- Free draw controls -->
+            <!-- Ink tools -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="8dp">
+                android:layout_marginEnd="10dp">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <ImageButton
                     android:id="@+id/btnPen"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_edit"
-                    app:tint="#FFFFFF"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:src="@drawable/ic_pi_pencil"
+                    android:background="@drawable/bg_circle"
+                    android:padding="10dp"
+                    app:tint="@color/brand"
                     android:layout_marginBottom="8dp"
-                    app:fabSize="mini" />
+                    android:contentDescription="Pena" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <ImageButton
                     android:id="@+id/btnEraser"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_close_clear_cancel"
-                    app:tint="#FFFFFF"
-                    app:fabSize="mini"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:src="@drawable/ic_pi_eraser"
+                    android:background="@drawable/bg_circle"
+                    android:padding="10dp"
+                    app:tint="@color/ink_900"
+                    android:layout_marginBottom="8dp"
+                    android:contentDescription="Penghapus" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <ImageButton
                     android:id="@+id/btnUndoInk"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_revert"
-                    app:fabSize="mini"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:src="@drawable/ic_pi_undo"
+                    android:background="@drawable/bg_circle"
+                    android:padding="10dp"
+                    app:tint="@color/ink_900"
+                    android:layout_marginBottom="8dp"
+                    android:contentDescription="Urungkan" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <ImageButton
                     android:id="@+id/btnClearFree"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_delete"
-                    app:fabSize="mini" />
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:src="@drawable/ic_pi_trash"
+                    android:background="@drawable/bg_circle"
+                    android:padding="10dp"
+                    app:tint="@color/danger"
+                    android:contentDescription="Hapus semua" />
             </LinearLayout>
         </FrameLayout>
     </androidx.core.widget.NestedScrollView>
@@ -226,7 +263,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@android:drawable/ic_menu_save"
+        android:src="@drawable/ic_pi_save"
+        app:tint="@color/surface"
+        app:backgroundTint="@color/brand"
         android:contentDescription="Simpan" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -235,7 +274,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
-        android:src="@android:drawable/ic_menu_share"
-        app:fabSize="mini" />
+        android:src="@drawable/ic_pi_share"
+        app:fabSize="mini"
+        app:tint="@color/ink_900"
+        app:backgroundTint="@color/surface"
+        android:contentDescription="Bagikan" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -49,11 +49,20 @@ class WordEditorView @JvmOverloads constructor(
     }
 
     private var cursorPosition = 0 // index of paragraph
+    private var zoom = 1f
     private var isInkMode = false // toggle between text ink and free draw
 
     // Page dimensions in px (A4 at 96dpi approx)
     private val pagePadding = 32f
     private var pageRect = RectF()
+
+    fun setZoom(z: Float) {
+        zoom = z.coerceIn(0.5f, 2.5f)
+        requestLayout()
+        invalidate()
+    }
+
+    fun getZoom(): Float = zoom
 
     fun bindDocument(doc: WordDocument) {
         document = doc
@@ -110,7 +119,7 @@ class WordEditorView @JvmOverloads constructor(
         val w = MeasureSpec.getSize(widthMeasureSpec)
         // Height based on content (pagination)
         val contentHeight = calculateContentHeight(w)
-        val h = contentHeight + paddingTop + paddingBottom + 100
+        val h = ((contentHeight + 100) * zoom).toInt() + paddingTop + paddingBottom
         setMeasuredDimension(w, h)
     }
 
@@ -128,6 +137,8 @@ class WordEditorView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        canvas.save()
+        canvas.scale(zoom, zoom)
 
         val w = width.toFloat()
         val pageLeft = pagePadding
@@ -222,6 +233,36 @@ class WordEditorView @JvmOverloads constructor(
             }
         }
 
+        // Tables (append setelah paragraf)
+        document.tables.forEach { tbl ->
+            val colW = (pageRight - pageLeft - marginLeft - marginRight) / tbl.cols.coerceAtLeast(1)
+            val rowH = 44f
+            val tPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 13f * resources.displayMetrics.density; color = Color.BLACK }
+            val bPaint = Paint().apply { color = Color.parseColor("#C9CDD3"); style = Paint.Style.STROKE; strokeWidth = 1.5f }
+            for (r in 0 until tbl.rows) {
+                for (c in 0 until tbl.cols) {
+                    val cx = pageLeft + marginLeft + c * colW
+                    val cy = y + r * rowH
+                    canvas.drawRect(cx, cy, cx + colW, cy + rowH, bPaint)
+                    val txt = tbl.cells.getOrNull(r)?.getOrNull(c) ?: ""
+                    if (txt.isNotEmpty()) {
+                        canvas.drawText(txt.take(18), cx + 10f, cy + rowH / 2 + 6f, tPaint)
+                    }
+                }
+            }
+            y += tbl.rows * rowH + 24f
+        }
+
+        // Images (append setelah tabel)
+        document.images.forEach { img ->
+            val iw = (pageRight - pageLeft - marginLeft - marginRight) * img.widthRatio
+            val scale = iw / img.bitmap.width
+            val ih = img.bitmap.height * scale
+            val dst = RectF(pageLeft + marginLeft, y, pageLeft + marginLeft + iw, y + ih)
+            canvas.drawBitmap(img.bitmap, null, dst, null)
+            y += ih + 24f
+        }
+
         // Empty state
         if (document.paragraphs.isEmpty()) {
             val hintPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.GRAY; textSize = 14f * resources.displayMetrics.density; textAlign = Paint.Align.CENTER; isFakeBoldText = false }
@@ -230,6 +271,7 @@ class WordEditorView @JvmOverloads constructor(
             // Show stylus icon hint
         }
 
+        canvas.restore()
         canvas.restore()
 
         // Draw page info footer

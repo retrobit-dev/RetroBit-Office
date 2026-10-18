@@ -128,6 +128,35 @@ class DocxExporter(private val context: Context) {
             }
         }
 
+        // Tables
+        document.tables.forEach { tbl ->
+            val cols = tbl.cols.coerceAtLeast(1)
+            val rows = tbl.rows.coerceAtLeast(1)
+            val table = doc.createTable(rows, cols)
+            for (r in 0 until rows) {
+                for (c in 0 until cols) {
+                    val cell = table.getRow(r).getCell(c)
+                    if (cell != null) {
+                        cell.text = tbl.cells.getOrNull(r)?.getOrNull(c) ?: ""
+                    }
+                }
+            }
+            doc.createParagraph()
+        }
+
+        // Images
+        document.images.forEach { img ->
+            val tmp = File(context.cacheDir, "img_${System.currentTimeMillis()}.png")
+            tmp.outputStream().use { img.bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+            val p = doc.createParagraph()
+            p.alignment = ParagraphAlignment.CENTER
+            val r = p.createRun()
+            val wEmu = Units.toEMU(500.0).toInt()
+            val hEmu = Units.toEMU(500.0 * img.bitmap.height / img.bitmap.width).toInt()
+            r.addPicture(tmp.inputStream(), XWPFDocument.PICTURE_TYPE_PNG, tmp.name, wEmu, hEmu)
+            tmp.delete()
+        }
+
         // If document empty, add empty para
         if (document.paragraphs.isEmpty()) {
             doc.createParagraph()

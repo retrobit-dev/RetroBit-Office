@@ -2,11 +2,33 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg">
 
-    <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-        <androidx.appcompat.widget.Toolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="?attr/actionBarSize" app:title="File Saya" />
-        <TextView android:id="@+id/fileCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 file" android:padding="12dp" android:textColor="#5F6368" />
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/bg"
+            app:title="File saya"
+            app:titleTextColor="@color/ink_900"
+            app:titleTextAppearance="@style/TextAppearance.App.Title" />
+
+        <TextView
+            android:id="@+id/fileCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 file"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/ink_400"
+            android:textSize="11sp" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -14,11 +36,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:padding="8dp" />
+        android:padding="12dp"
+        android:clipToPadding="false" />
 
-    <LinearLayout android:id="@+id/emptyView" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center" android:visibility="gone" app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📁" android:textSize="48sp" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Belum ada file" android:textStyle="bold" android:layout_marginTop="12dp" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Buat dokumen baru di Beranda" android:textColor="#5F6368" />
+    <LinearLayout
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_pi_folder"
+            app:tint="@color/ink_400" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Belum ada file"
+            android:textStyle="bold"
+            android:textColor="@color/ink_900"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Buat dokumen baru dari Beranda"
+            android:textColor="@color/ink_400"
+            android:textSize="12sp" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

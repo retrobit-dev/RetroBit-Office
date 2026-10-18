@@ -38,6 +38,13 @@ class WordEditorActivity : AppCompatActivity() {
     private var currentMode: InputMode = InputMode.HANDWRITING_TO_TEXT
     private var currentFile: File? = null
 
+    private val undoStack = ArrayDeque<WordDocument>()
+    private val redoStack = ArrayDeque<WordDocument>()
+
+    companion object {
+        private const val REQ_PICK_IMAGE = 41
+    }
+
     private val exporter by lazy { DocxExporter(this) }
     private val printHelper by lazy { PrintHelper(this) }
 
@@ -94,7 +101,7 @@ class WordEditorActivity : AppCompatActivity() {
             override fun onStrokeUpdated(stroke: InkStroke) {}
             override fun onStrokeEnded(stroke: InkStroke, allStrokes: List<InkStroke>) {}
             override fun onStylusStateChanged(isStylus: Boolean) {
-                stylusStatus.text = if (isStylus) "✏️ M-Pencil Aktif" else "👆 Sentuh"
+                stylusStatus.text = if (isStylus) "M-Pencil aktif" else "Mode sentuh"
                 stylusStatus.setTextColor(if (isStylus) Color.parseColor("#137333") else Color.GRAY)
             }
             override fun onModeChanged(mode: InputMode) {}
@@ -131,7 +138,7 @@ class WordEditorActivity : AppCompatActivity() {
             runOnUiThread {
                 editorView.insertHandwritingResult(text)
                 showCandidateBar(text, candidates)
-                Snackbar.make(editorView, "✍️ \"$text\"", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(editorView, "Teks: \"$text\"", Snackbar.LENGTH_SHORT).show()
             }
         }
         // Language selector
@@ -186,13 +193,14 @@ class WordEditorActivity : AppCompatActivity() {
     private fun setupWordToolbar() {
         toolbar.onFormattingChanged = { action ->
             when (action) {
-                is WordToolbar.WordToolbarAction.Bold -> editorView.applyFormatting(bold = action.enabled)
-                is WordToolbar.WordToolbarAction.Italic -> editorView.applyFormatting(italic = action.enabled)
-                is WordToolbar.WordToolbarAction.Underline -> editorView.applyFormatting(underline = action.enabled)
-                is WordToolbar.WordToolbarAction.Align -> editorView.applyFormatting(alignment = action.align)
-                is WordToolbar.WordToolbarAction.FontColor -> editorView.applyFormatting(color = action.color)
-                is WordToolbar.WordToolbarAction.FontSize -> editorView.applyFormatting(fontSize = action.sizePt)
+                is WordToolbar.WordToolbarAction.Bold -> { pushUndo(); editorView.applyFormatting(bold = action.enabled) }
+                is WordToolbar.WordToolbarAction.Italic -> { pushUndo(); editorView.applyFormatting(italic = action.enabled) }
+                is WordToolbar.WordToolbarAction.Underline -> { pushUndo(); editorView.applyFormatting(underline = action.enabled) }
+                is WordToolbar.WordToolbarAction.Align -> { pushUndo(); editorView.applyFormatting(alignment = action.align) }
+                is WordToolbar.WordToolbarAction.FontColor -> { pushUndo(); editorView.applyFormatting(color = action.color) }
+                is WordToolbar.WordToolbarAction.FontSize -> { pushUndo(); editorView.applyFormatting(fontSize = action.sizePt) }
                 is WordToolbar.WordToolbarAction.Bullet -> {
+                    pushUndo()
                     val para = document.paragraphs.getOrNull(0)
                     para?.bullet = action.style
                     editorView.invalidate()
@@ -200,9 +208,161 @@ class WordEditorActivity : AppCompatActivity() {
                 is WordToolbar.WordToolbarAction.Print -> printDocument()
                 is WordToolbar.WordToolbarAction.Save -> saveDocument()
                 is WordToolbar.WordToolbarAction.InsertImage -> pickImage()
-                else -> {}
+                is WordToolbar.WordToolbarAction.InsertTable -> insertTableDialog()
+                is WordToolbar.WordToolbarAction.Undo -> undo()
+                is WordToolbar.WordToolbarAction.Redo -> redo()
+                is WordToolbar.WordToolbarAction.WordCount -> showWordCount()
+                is WordToolbar.WordToolbarAction.PageLayout -> showMarginsDialog()
+                is WordToolbar.WordToolbarAction.PaperSize -> showPaperSizeDialog()
+                is WordToolbar.WordToolbarAction.ToggleOrientation -> toggleOrientation()
+                is WordToolbar.WordToolbarAction.Margins -> showMarginsDialog()
+                is WordToolbar.WordToolbarAction.ZoomIn -> editorView.setZoom(editorView.getZoom() * 1.2f)
+                is WordToolbar.WordToolbarAction.ZoomOut -> editorView.setZoom(editorView.getZoom() / 1.2f)
+                is WordToolbar.WordToolbarAction.Pen -> findViewById<RadioButton>(R.id.modeFreeDraw).isChecked = true
             }
         }
+    }
+
+    // ---------- Undo / Redo (snapshot) ----------
+    private fun snapshot(): WordDocument = document.copy(
+        paragraphs = document.paragraphs.map {
+            it.copy(runs = it.runs.map { r -> r.copy() }.toMutableList(), style = it.style.copy())
+        }.toMutableList(),
+        pageSettings = document.pageSettings.copy(),
+        tables = document.tables.map { t ->
+            t.copy(cells = t.cells.map { row -> row.toMutableList() }.toMutableList())
+        }.toMutableList(),
+        images = document.images.toMutableList()
+    )
+
+    private fun pushUndo() {
+        undoStack.addLast(snapshot())
+        if (undoStack.size > 30) undoStack.removeFirst()
+        redoStack.clear()
+    }
+
+    private fun undo() {
+        if (undoStack.isEmpty()) {
+            Toast.makeText(this, "Tidak ada yang bisa diurungkan", Toast.LENGTH_SHORT).show()
+            return
+        }
+        redoStack.addLast(snapshot())
+        document = undoStack.removeLast()
+        editorView.bindDocument(document)
+    }
+
+    private fun redo() {
+        if (redoStack.isEmpty()) {
+            Toast.makeText(this, "Tidak ada yang bisa diulangi", Toast.LENGTH_SHORT).show()
+            return
+        }
+        undoStack.addLast(snapshot())
+        document = redoStack.removeLast()
+        editorView.bindDocument(document)
+    }
+
+    // ---------- Insert table ----------
+    private fun insertTableDialog() {
+        val layout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 8)
+        }
+        val rowsInput = EditText(this).apply { hint = "Jumlah baris (mis. 3)"; inputType = android.text.InputType.TYPE_CLASS_NUMBER; setText("3") }
+        val colsInput = EditText(this).apply { hint = "Jumlah kolom (mis. 3)"; inputType = android.text.InputType.TYPE_CLASS_NUMBER; setText("3") }
+        layout.addView(rowsInput)
+        layout.addView(colsInput)
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Sisipkan Tabel")
+            .setView(layout)
+            .setPositiveButton("Sisipkan") { _, _ ->
+                val rows = rowsInput.text.toString().toIntOrNull()?.coerceIn(1, 20) ?: 3
+                val cols = colsInput.text.toString().toIntOrNull()?.coerceIn(1, 8) ?: 3
+                pushUndo()
+                document.tables.add(DocTable(rows, cols))
+                editorView.bindDocument(document)
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    // ---------- Insert image ----------
+    private fun pickImage() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "image/*"
+        }
+        try {
+            startActivityForResult(intent, REQ_PICK_IMAGE)
+        } catch (_: Exception) {
+            Toast.makeText(this, "Tidak ada aplikasi galeri", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQ_PICK_IMAGE && resultCode == RESULT_OK) {
+            val uri = data?.data ?: return
+            try {
+                val input = contentResolver.openInputStream(uri) ?: return
+                val raw = android.graphics.BitmapFactory.decodeStream(input)
+                input.close()
+                if (raw == null) return
+                pushUndo()
+                val scaled = if (raw.width > 1280) {
+                    val h = (1280f * raw.height / raw.width).toInt()
+                    android.graphics.Bitmap.createScaledBitmap(raw, 1280, h, true)
+                } else raw
+                document.images.add(DocImage(scaled))
+                editorView.bindDocument(document)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Gagal memuat gambar: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // ---------- Page setup ----------
+    private fun toggleOrientation() {
+        pushUndo()
+        val ps = document.pageSettings
+        ps.orientation = if (ps.orientation == Orientation.PORTRAIT) Orientation.LANDSCAPE else Orientation.PORTRAIT
+        editorView.bindDocument(document)
+        Toast.makeText(this, "Orientasi: ${ps.orientation}", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showPaperSizeDialog() {
+        val sizes = PaperSize.entries.map { it.name }.toTypedArray()
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Ukuran kertas")
+            .setItems(sizes) { _, which ->
+                pushUndo()
+                document.pageSettings.paperSize = PaperSize.entries[which]
+                editorView.bindDocument(document)
+            }
+            .show()
+    }
+
+    private fun showMarginsDialog() {
+        val opts = arrayOf("Sempit (12 mm)", "Normal (25 mm)", "Lebar (38 mm)")
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Margin halaman")
+            .setItems(opts) { _, which ->
+                pushUndo()
+                val mm = when (which) { 0 -> 12f; 1 -> 25.4f; else -> 38f }
+                val ps = document.pageSettings
+                ps.marginTopMm = mm; ps.marginBottomMm = mm
+                ps.marginLeftMm = mm; ps.marginRightMm = mm
+                editorView.bindDocument(document)
+            }
+            .show()
+    }
+
+    private fun showWordCount() {
+        val msg = "Kata: ${document.wordCount()}\nKarakter: ${document.charCount()}\nParagraf: ${document.paragraphs.size}\nTabel: ${document.tables.size}\nGambar: ${document.images.size}"
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Statistik dokumen")
+            .setMessage(msg)
+            .setPositiveButton("Tutup", null)
+            .show()
     }
 
     private fun setupFab() {
@@ -267,7 +427,7 @@ class WordEditorActivity : AppCompatActivity() {
                 exporter.export(document, outFile)
             }
             currentFile = outFile
-            Snackbar.make(editorView, "✓ Disimpan: ${outFile.name}", Snackbar.LENGTH_LONG)
+            Snackbar.make(editorView, "Tersimpan: ${outFile.name}", Snackbar.LENGTH_LONG)
                 .setAction("Buka Folder") { openFileLocation(outFile) }
                 .show()
         } catch (e: Exception) {
@@ -319,6 +479,7 @@ class WordEditorActivity : AppCompatActivity() {
             R.id.action_save -> { saveDocument(); true }
             R.id.action_print -> { printDocument(); true }
             R.id.action_export_pdf -> { printDocument(); true }
+            R.id.action_share -> { shareDocument(); true }
             else -> super.onOptionsItemSelected(item)
         }
     }

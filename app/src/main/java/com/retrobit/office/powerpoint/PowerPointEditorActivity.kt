@@ -120,6 +120,7 @@ class PowerPointEditorActivity : AppCompatActivity() {
             slideView.invalidate()
         }
         findViewById<View>(R.id.btnTheme)?.setOnClickListener { showThemePicker() }
+        findViewById<View>(R.id.btnTransition)?.setOnClickListener { showTransitionPicker() }
 
         // Text editing
         slideView.onTextEditRequested = { textBox ->
@@ -222,38 +223,111 @@ class PowerPointEditorActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun showTransitionPicker() {
+        val items = Transition.entries.map {
+            when (it) {
+                Transition.NONE -> "Tanpa transisi"
+                Transition.FADE -> "Fade"
+                Transition.PUSH -> "Push"
+                Transition.WIPE -> "Wipe"
+                Transition.ZOOM -> "Zoom"
+                Transition.MORPH -> "Morph"
+            }
+        }.toTypedArray()
+        AlertDialog.Builder(this)
+            .setTitle("Transisi slide")
+            .setItems(items) { _, which ->
+                presentation.slides[presentation.currentIndex].transition = Transition.entries[which]
+                Toast.makeText(this, "Transisi: ${items[which]}", Toast.LENGTH_SHORT).show()
+            }
+            .show()
+    }
+
+    private fun renderSlideBitmap(index: Int): Bitmap {
+        val prev = slideView.slide
+        slideView.slide = presentation.slides[index]
+        val bmp = slideView.getBitmap()
+        slideView.slide = prev
+        return bmp
+    }
+
     private fun startSlideshow() {
-        // Simple slideshow dialog
         val dialog = AlertDialog.Builder(this).create()
         val container = FrameLayout(this)
-        val imageView = ImageView(this).apply { layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT) }
-        val controls = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; setBackgroundColor(Color.parseColor("#AA000000")); setPadding(24,24,24,24) }
-        val btnPrev = Button(this).apply { text = "◀" }
-        val indicator = TextView(this).apply { setTextColor(Color.WHITE); text = "1 / ${presentation.slides.size}" }
-        val btnNext = Button(this).apply { text = "▶" }
-        val btnClose = Button(this).apply { text = "✕ Tutup" }
-        controls.addView(btnPrev); controls.addView(indicator); controls.addView(btnNext); controls.addView(btnClose)
+        val imageView = ImageView(this).apply {
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            setBackgroundColor(Color.BLACK)
+        }
+        val controls = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setBackgroundColor(Color.parseColor("#CC000000"))
+            setPadding(24, 18, 24, 18)
+            gravity = android.view.Gravity.CENTER_VERTICAL
+        }
+        val btnPrev = ImageButton(this).apply {
+            setImageResource(R.drawable.ic_pi_chevron_left)
+            setColorFilter(Color.WHITE)
+            setBackgroundColor(Color.TRANSPARENT)
+        }
+        val indicator = TextView(this).apply { setTextColor(Color.WHITE); setPadding(24, 0, 24, 0) }
+        val btnNext = ImageButton(this).apply {
+            setImageResource(R.drawable.ic_pi_chevron_right)
+            setColorFilter(Color.WHITE)
+            setBackgroundColor(Color.TRANSPARENT)
+        }
+        val btnClose = ImageButton(this).apply {
+            setImageResource(R.drawable.ic_pi_close)
+            setColorFilter(Color.WHITE)
+            setBackgroundColor(Color.TRANSPARENT)
+        }
+        val spacer = View(this)
+        controls.addView(btnPrev)
+        controls.addView(indicator)
+        controls.addView(spacer, LinearLayout.LayoutParams(0, 1, 1f))
+        controls.addView(btnNext)
+        controls.addView(btnClose, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = 24 })
         container.addView(imageView)
         container.addView(controls, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply { gravity = android.view.Gravity.BOTTOM })
         dialog.setView(container)
+
         var idx = presentation.currentIndex
-        fun update() {
-            // Render current slide to bitmap would require view rendering; simplified: just show slide number
-            indicator.text = "${idx + 1} / ${presentation.slides.size}"
-            // Create simple bitmap representation
-            val bmp = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888)
-            val c = android.graphics.Canvas(bmp)
-            c.drawColor(presentation.slides[idx].background.color)
-            val p = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; textSize = 48f }
-            c.drawText(presentation.slides[idx].elements.filterIsInstance<SlideElement.TextBox>().firstOrNull()?.text ?: "Slide ${idx+1}", 100f, 360f, p)
-            imageView.setImageBitmap(bmp)
+        var previousBmp: Bitmap? = null
+
+        fun update(animate: Boolean) {
+            val bmp = renderSlideBitmap(idx)
+            indicator.text = "${'$'}{idx + 1} / ${'$'}{presentation.slides.size}"
+            val trans = presentation.slides[idx].transition
+            if (animate && previousBmp != null && trans != Transition.NONE) {
+                val prev = previousBmp!!
+                val layers = android.graphics.drawable.TransitionDrawable(
+                    arrayOf(
+                        android.graphics.drawable.BitmapDrawable(resources, prev),
+                        android.graphics.drawable.BitmapDrawable(resources, bmp)
+                    )
+                )
+                imageView.setImageDrawable(layers)
+                layers.startTransition(450)
+                when (trans) {
+                    Transition.PUSH -> imageView.animate().translationX(300f).translationX(0f).setDuration(450).start()
+                    Transition.ZOOM -> imageView.animate().scaleX(1.15f).scaleX(1f).scaleY(1.15f).scaleY(1f).setDuration(450).start()
+                    else -> {}
+                }
+            } else {
+                imageView.setImageBitmap(bmp)
+            }
+            previousBmp = bmp
         }
-        btnPrev.setOnClickListener { if (idx > 0) { idx--; update() } }
-        btnNext.setOnClickListener { if (idx < presentation.slides.size - 1) { idx++; update() } }
+
+        btnPrev.setOnClickListener { if (idx > 0) { idx--; update(true) } }
+        btnNext.setOnClickListener { if (idx < presentation.slides.size - 1) { idx++; update(true) } }
         btnClose.setOnClickListener { dialog.dismiss() }
         dialog.show()
-        update()
-        dialog.window?.setLayout(1200, 800)
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.92).toInt(),
+            (resources.displayMetrics.heightPixels * 0.88).toInt()
+        )
+        update(false)
     }
 
     private fun savePresentation() {
@@ -264,7 +338,7 @@ class PowerPointEditorActivity : AppCompatActivity() {
             val bitmaps = presentation.slides.map { slideView.getBitmap() }
             exporter.export(presentation, out, bitmaps)
             currentFile = out
-            Snackbar.make(slideView, "✓ Disimpan: ${out.name}", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(slideView, "Tersimpan: ${out.name}", Snackbar.LENGTH_LONG).show()
         } catch (e: Exception) {
             Toast.makeText(this, "Gagal: ${e.message}", Toast.LENGTH_LONG).show()
         }
@@ -293,6 +367,7 @@ class PowerPointEditorActivity : AppCompatActivity() {
         android.R.id.home -> { finish(); true }
         R.id.action_save -> { savePresentation(); true }
         R.id.action_print -> { printPresentation(); true }
+        R.id.action_slideshow -> { startSlideshow(); true }
         else -> super.onOptionsItemSelected(item)
     }
 

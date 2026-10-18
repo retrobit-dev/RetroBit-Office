@@ -1,6 +1,7 @@
 package com.retrobit.office.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -59,7 +60,13 @@ class FileBrowserActivity : AppCompatActivity() {
             val f = files[pos]
             h.itemView.findViewById<TextView>(R.id.fileName).text = f.name
             h.itemView.findViewById<TextView>(R.id.fileMeta).text = "${f.length()/1024} KB"
-            h.itemView.findViewById<TextView>(R.id.fileIcon).text = when(f.extension){"docx"->"📄";"xlsx"->"📊";"pptx"->"📽";else->"📁"}
+            val icon = h.itemView.findViewById<android.widget.ImageView>(R.id.fileIcon)
+            when (f.extension) {
+                "docx" -> { icon.setImageResource(R.drawable.ic_pi_file_text); icon.setColorFilter(Color.parseColor("#2E6BE6")) }
+                "xlsx" -> { icon.setImageResource(R.drawable.ic_pi_numbers); icon.setColorFilter(Color.parseColor("#1FA971")) }
+                "pptx" -> { icon.setImageResource(R.drawable.ic_pi_presentation); icon.setColorFilter(Color.parseColor("#E8590C")) }
+                else -> { icon.setImageResource(R.drawable.ic_pi_file); icon.setColorFilter(Color.parseColor("#64676C")) }
+            }
             h.itemView.setOnClickListener { onClick(f) }
         }
         override fun getItemCount() = files.size

@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_home" android:title="Beranda" android:icon="@android:drawable/ic_menu_gallery"/>
-    <item android:id="@+id/nav_files" android:title="File" android:icon="@android:drawable/ic_menu_agenda"/>
-    <item android:id="@+id/nav_settings" android:title="Pengaturan" android:icon="@android:drawable/ic_menu_preferences"/>
+    <item android:id="@+id/nav_home" android:title="Beranda" android:icon="@drawable/ic_pi_home"/>
+    <item android:id="@+id/nav_files" android:title="File" android:icon="@drawable/ic_pi_folder"/>
+    <item android:id="@+id/nav_settings" android:title="Pengaturan" android:icon="@drawable/ic_pi_settings_cog"/>
 </menu>

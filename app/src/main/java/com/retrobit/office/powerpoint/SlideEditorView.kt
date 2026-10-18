@@ -174,7 +174,14 @@ class SlideEditorView @JvmOverloads constructor(
                 val imgPaint = Paint().apply { color = Color.parseColor("#E0E0E0") }
                 canvas.drawRoundRect(rect, 12f, 12f, imgPaint)
                 val iconPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.GRAY; textSize = 40f; textAlign = Paint.Align.CENTER }
-                canvas.drawText("🖼", rect.centerX(), rect.centerY() + 12f, iconPaint)
+                // Ikon gambar pixel-style (garis diagonal + lingkaran matahari)
+            val ix = rect.centerX(); val iy = rect.centerY()
+            val isz = minOf(rect.width(), rect.height()) * 0.22f
+            val iconStroke = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#9AA0A6"); style = Paint.Style.STROKE; strokeWidth = isz * 0.18f }
+            canvas.drawRect(ix - isz, iy - isz * 0.75f, ix + isz, iy + isz * 0.75f, iconStroke)
+            canvas.drawCircle(ix - isz * 0.45f, iy - isz * 0.3f, isz * 0.22f, iconStroke)
+            canvas.drawLine(ix - isz, iy + isz * 0.6f, ix - isz * 0.15f, iy - isz * 0.15f, iconStroke)
+            canvas.drawLine(ix - isz * 0.15f, iy - isz * 0.15f, ix + isz, iy + isz * 0.6f, iconStroke)
                 val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.GRAY; textSize = 12f * resources.displayMetrics.density; textAlign = Paint.Align.CENTER }
                 canvas.drawText("Gambar", rect.centerX(), rect.centerY() + 32f, labelPaint)
             }

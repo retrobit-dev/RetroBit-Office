@@ -3,325 +3,292 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/bg">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/bg"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="@color/primary" />
-
-        <!-- Stylus Banner MatePad Mini -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/stylusBanner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/primary"
-            app:strokeWidth="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="#33FFFFFF"
-                    android:gravity="center"
-                    android:text="✏️"
-                    android:textSize="24sp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Huawei M-Pencil Siap"
-                        android:textColor="#FFFFFF"
-                        android:textStyle="bold"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tulis tangan → otomatis jadi teks • 4096 pressure levels"
-                        android:textColor="#E8F0FE"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="● Aktif"
-                    android:textColor="#81C995"
-                    android:textSize="12sp"
-                    android:background="#33FFFFFF"
-                    android:padding="8dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            style="@style/Widget.App.Toolbar"
+            app:title="RetroBit Office"
+            app:subtitle="Docs · Sheets · Slides" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:clipToPadding="false"
+        android:paddingBottom="140dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp">
 
-            <!-- Office Cards -->
+            <!-- Search -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_search"
+                android:paddingHorizontal="14dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_pi_search"
+                    app:tint="@color/ink_400" />
+
+                <EditText
+                    android:id="@+id/searchInput"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="Cari dokumen..."
+                    android:textColorHint="@color/ink_400"
+                    android:textColor="@color/ink_900"
+                    android:textSize="13sp"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:layout_marginStart="10dp"
+                    android:importantForAutofill="no" />
+            </LinearLayout>
+
+            <!-- Stylus chip -->
+            <LinearLayout
+                android:id="@+id/stylusBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_pill"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_pi_pencil"
+                    app:tint="@color/brand" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="M-Pencil aktif — tulis tangan jadi teks atau gambar bebas"
+                    android:textColor="@color/ink_600"
+                    android:textSize="11sp"
+                    android:layout_marginStart="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Siap"
+                    android:textColor="@color/brand"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Buat baru -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Buat Dokumen Baru"
-                android:textSize="18sp"
+                android:text="Buat baru"
+                android:textColor="@color/ink_900"
+                android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
+                android:layout_marginTop="22dp"
                 android:layout_marginBottom="12dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
+                android:orientation="horizontal">
 
-                <com.google.android.material.card.MaterialCardView
+                <!-- Word -->
+                <LinearLayout
                     android:id="@+id/cardWord"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardBackgroundColor="@color/word_blue">
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_card"
+                    android:padding="14dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:gravity="center">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_pi_file_text"
+                        android:background="@drawable/bg_badge_blue"
+                        android:padding="8dp"
+                        app:tint="@color/brand" />
 
-                        <TextView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="#FFFFFF"
-                            android:gravity="center"
-                            android:text="W"
-                            android:textColor="@color/word_blue"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Word"
+                        android:textColor="@color/ink_900"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:layout_marginTop="10dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Word"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=".docx dokumen"
+                        android:textColor="@color/ink_400"
+                        android:textSize="10sp" />
 
-                        <TextView
-                            android:id="@+id/btnNewWord"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="⊕ Dokumen"
-                            android:textColor="#FFFFFF"
-                            android:textSize="11sp"
-                            android:background="#33FFFFFF"
-                            android:padding="6dp"
-                            android:layout_marginTop="6dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/btnNewWord"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ Buat"
+                        android:textColor="@color/brand"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
-                <com.google.android.material.card.MaterialCardView
+                <!-- Excel -->
+                <LinearLayout
                     android:id="@+id/cardExcel"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginHorizontal="4dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardBackgroundColor="@color/excel_green">
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_card"
+                    android:padding="14dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:gravity="center">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_pi_grid_3x3"
+                        android:background="@drawable/bg_badge_green"
+                        android:padding="8dp"
+                        app:tint="@color/green" />
 
-                        <TextView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="#FFFFFF"
-                            android:gravity="center"
-                            android:text="X"
-                            android:textColor="@color/excel_green"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Excel"
+                        android:textColor="@color/ink_900"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:layout_marginTop="10dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Excel"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=".xlsx spreadsheet"
+                        android:textColor="@color/ink_400"
+                        android:textSize="10sp" />
 
-                        <TextView
-                            android:id="@+id/btnNewExcel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="⊕ Spreadsheet"
-                            android:textColor="#FFFFFF"
-                            android:textSize="11sp"
-                            android:background="#33FFFFFF"
-                            android:padding="6dp"
-                            android:layout_marginTop="6dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/btnNewExcel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ Buat"
+                        android:textColor="@color/green"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
-                <com.google.android.material.card.MaterialCardView
+                <!-- PowerPoint -->
+                <LinearLayout
                     android:id="@+id/cardPowerPoint"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardBackgroundColor="@color/ppt_orange">
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_card"
+                    android:padding="14dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:gravity="center">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_pi_presentation"
+                        android:background="@drawable/bg_badge_orange"
+                        android:padding="8dp"
+                        app:tint="@color/orange" />
 
-                        <TextView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="#FFFFFF"
-                            android:gravity="center"
-                            android:text="P"
-                            android:textColor="@color/ppt_orange"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PowerPoint"
+                        android:textColor="@color/ink_900"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:layout_marginTop="10dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="PowerPoint"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=".pptx presentasi"
+                        android:textColor="@color/ink_400"
+                        android:textSize="10sp" />
 
-                        <TextView
-                            android:id="@+id/btnNewPpt"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="⊕ Presentasi"
-                            android:textColor="#FFFFFF"
-                            android:textSize="11sp"
-                            android:background="#33FFFFFF"
-                            android:padding="6dp"
-                            android:layout_marginTop="6dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/btnNewPpt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ Buat"
+                        android:textColor="@color/orange"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Features -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fitur Stylus M-Pencil"
-                android:textStyle="bold"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/text_primary" />
-
+            <!-- Recent -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:gravity="center_vertical"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="4dp">
 
-                <com.google.android.material.card.MaterialCardView
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="12dp">
+                    android:text="File terbaru"
+                    android:textColor="@color/ink_900"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✍️ Tulisan → Teks" android:textStyle="bold" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tulis tangan otomatis jadi teks ketik. ML Kit ID/EN." android:textSize="10sp" android:textColor="@color/text_secondary" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/storageInfo"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    app:cardCornerRadius="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎨 Tulisan Bebas" android:textStyle="bold" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Coretan bebas tetap sebagai ink. Untuk anotasi." android:textSize="10sp" android:textColor="@color/text_secondary" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    android:text="0 file"
+                    android:textColor="@color/ink_400"
+                    android:textSize="11sp" />
             </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="File Terbaru"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/text_primary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recentList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                android:layout_marginTop="8dp" />
-
-            <TextView
-                android:id="@+id/storageInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 file • Huawei MatePad Mini"
-                android:textSize="11sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="center" />
+                android:paddingTop="4dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -331,15 +298,23 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:text="Buat Baru"
-        app:icon="@android:drawable/ic_input_add" />
+        android:layout_marginBottom="72dp"
+        android:text="Buat baru"
+        android:textSize="12sp"
+        app:icon="@drawable/ic_pi_plus"
+        app:backgroundTint="@color/brand"
+        app:iconTint="@color/surface" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:menu="@menu/menu_bottom_nav"
-        app:labelVisibilityMode="labeled" />
+        android:background="@color/surface"
+        app:itemIconTint="@color/nav_tint"
+        app:itemTextColor="@color/nav_tint"
+        app:itemActiveIndicatorStyle="@style/NavIndicator"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/menu_bottom_nav" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

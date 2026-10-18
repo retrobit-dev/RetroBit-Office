@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_save" android:title="Simpan" android:icon="@android:drawable/ic_menu_save" app:showAsAction="ifRoom"/>
-    <item android:id="@+id/action_print" android:title="Cetak" app:showAsAction="ifRoom"/>
-    <item android:id="@+id/action_slideshow" android:title="Tampilkan Slide" android:icon="@android:drawable/ic_media_play" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_save" android:title="Simpan" android:icon="@drawable/ic_pi_save" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_print" android:title="Cetak" android:icon="@drawable/ic_pi_printer" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_slideshow" android:title="Tampilkan Slide" android:icon="@drawable/ic_pi_play" app:showAsAction="ifRoom"/>
 </menu>

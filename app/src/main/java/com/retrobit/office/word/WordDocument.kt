@@ -13,6 +13,8 @@ data class WordDocument(
     var pageSettings: PageSettings = PageSettings(),
     var headers: MutableList<String> = mutableListOf(),
     var footers: MutableList<String> = mutableListOf(),
+    var tables: MutableList<DocTable> = mutableListOf(),
+    var images: MutableList<DocImage> = mutableListOf(),
     // Ink annotations (free draw layer)
     var inkStrokes: MutableList<com.retrobit.office.core.stylus.InkStroke> = mutableListOf()
 ) {
@@ -104,3 +106,14 @@ data class TableCell(
 )
 
 enum class BorderStyle { NONE, SINGLE, DOUBLE, DASHED }
+
+data class DocTable(
+    var rows: Int = 3,
+    var cols: Int = 3,
+    var cells: MutableList<MutableList<String>> = MutableList(rows) { MutableList(cols) { "" } }
+)
+
+data class DocImage(
+    var bitmap: android.graphics.Bitmap,
+    var widthRatio: Float = 1f // 0..1 dari lebar halaman
+)

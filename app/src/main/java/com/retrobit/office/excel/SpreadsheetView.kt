@@ -88,13 +88,17 @@ class SpreadsheetView @JvmOverloads constructor(
         return (width - contentW).coerceAtMost(0f)
     }
     private fun minOffsetY(): Float {
-        val contentH = headerHeight + model.rows.size * cellHeight
+        val contentH = headerHeight + visibleRows().size * cellHeight
         return (height - contentH).coerceAtMost(0f)
     }
 
+    private fun visibleRows(): List<Int> = model.rows.indices.filter { !model.rows[it].hidden }
+
     private fun handleTap(x: Float, y: Float) {
         val col = ((x - headerWidth - offsetX) / cellWidth).toInt()
-        val row = ((y - headerHeight - offsetY) / cellHeight).toInt()
+        val si = ((y - headerHeight - offsetY) / cellHeight).toInt()
+        val vis = visibleRows()
+        val row = vis.getOrElse(si) { -1 }
         if (col in 0 until model.cols.size && row in 0 until model.rows.size) {
             selectedCol = col
             selectedRow = row
@@ -107,8 +111,10 @@ class SpreadsheetView @JvmOverloads constructor(
                 invalidate()
             }
         } else if (x < headerWidth && y > headerHeight) {
-            selectedRow = row.coerceIn(0, model.rows.size - 1)
-            invalidate()
+            if (row >= 0) {
+                selectedRow = row
+                invalidate()
+            }
         }
     }
 
@@ -166,11 +172,13 @@ class SpreadsheetView @JvmOverloads constructor(
         // Draw grid cells
         val firstCol = maxOf(0, ((-offsetX) / cellWidth).toInt())
         val lastCol = minOf(model.cols.size, firstCol + ceil(width / cellWidth).toInt() + 2)
+        val vis = visibleRows()
         val firstRow = maxOf(0, ((-offsetY) / cellHeight).toInt())
-        val lastRow = minOf(model.rows.size, firstRow + ceil(height / cellHeight).toInt() + 2)
+        val lastRow = minOf(vis.size, firstRow + ceil(height / cellHeight).toInt() + 2)
 
-        for (r in firstRow until lastRow) {
-            val y = contentTop + r * cellHeight
+        for (si in firstRow until lastRow) {
+            val r = vis[si]
+            val y = contentTop + si * cellHeight
             for (c in firstCol until lastCol) {
                 val x = contentLeft + c * cellWidth
                 val cell = model.getCell(r, c)
@@ -267,8 +275,9 @@ class SpreadsheetView @JvmOverloads constructor(
         }
 
         // Row headers (1,2,3...)
-        for (r in firstRow until lastRow) {
-            val y = contentTop + r * cellHeight
+        for (si in firstRow until lastRow) {
+            val r = vis[si]
+            val y = contentTop + si * cellHeight
             if (r == selectedRow) {
                 canvas.drawRect(0f, y, headerWidth, y + cellHeight, Paint().apply { color = Color.parseColor("#D2E3FC") })
             } else {

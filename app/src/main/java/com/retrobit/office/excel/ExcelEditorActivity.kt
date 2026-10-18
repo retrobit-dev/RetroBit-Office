@@ -1,6 +1,8 @@
 package com.retrobit.office.excel
 
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -115,6 +117,79 @@ class ExcelEditorActivity : AppCompatActivity() {
         }
     }
 
+    private fun selectedPosition(): Pair<Int, Int> {
+        val refText = cellRef.text.toString()
+        val row = refText.filter { it.isDigit() }.toIntOrNull()?.minus(1) ?: 0
+        val colName = refText.filter { it.isLetter() }
+        val col = colName.fold(0) { acc, ch -> acc * 26 + (ch - 'A' + 1) } - 1
+        return row to col
+    }
+
+    /** Grafik batang dari kolom terpilih (nilai numerik baris 1..N). */
+    private fun showChartDialog() {
+        val (_, col) = selectedPosition()
+        val sheet = model.activeSheet
+        val labels = mutableListOf<String>()
+        val values = mutableListOf<Float>()
+        for (r in 0 until sheet.rows.size) {
+            if (sheet.rows[r].hidden) continue
+            val raw = sheet.getCell(r, col).displayValue.ifEmpty { sheet.getCell(r, col).value }
+            if (raw.isBlank()) continue
+            val num = raw.replace("[^0-9.,-]".toRegex(), "").replace(",", ".").toFloatOrNull()
+            if (num != null) {
+                labels += (sheet.getCell(r, 0).value.ifEmpty { "${r + 1}" }).take(8)
+                values += num
+            }
+            if (values.size >= 12) break
+        }
+        if (values.isEmpty()) {
+            Toast.makeText(this, "Tidak ada data numerik pada kolom ini", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val chart = ChartView(this, labels, values)
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Grafik Kolom ${sheet.getColumnName(col)}")
+            .setView(chart)
+            .setPositiveButton("Tutup", null)
+            .show()
+    }
+
+    /** Filter baris berdasarkan nilai unik kolom terpilih (nyembunyikan baris). */
+    private fun showFilterDialog() {
+        val (_, col) = selectedPosition()
+        val sheet = model.activeSheet
+        val unique = LinkedHashSet<String>()
+        for (r in 0 until sheet.rows.size) {
+            unique += sheet.getCell(r, col).displayValue.ifEmpty { sheet.getCell(r, col).value }
+        }
+        val items = unique.toTypedArray()
+        if (items.isEmpty()) return
+        val checked = BooleanArray(items.size) { true }
+        val shown = items.map { v ->
+            val r = (0 until sheet.rows.size).firstOrNull { sheet.getCell(it, col).displayValue.ifEmpty { sheet.getCell(it, col).value } == v } ?: 0
+            !sheet.rows[r].hidden
+        }.toBooleanArray()
+        for (i in checked.indices) checked[i] = shown[i]
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Filter Kolom ${sheet.getColumnName(col)}")
+            .setMultiChoiceItems(items, checked) { _, which, isChecked -> checked[which] = isChecked }
+            .setPositiveButton("Terapkan") { _, _ ->
+                val visible = items.filterIndexed { i, _ -> checked[i] }.toSet()
+                for (r in 0 until sheet.rows.size) {
+                    val v = sheet.getCell(r, col).displayValue.ifEmpty { sheet.getCell(r, col).value }
+                    sheet.rows[r].hidden = v !in visible
+                }
+                sheet.filterEnabled = true
+                spreadsheetView.invalidate()
+            }
+            .setNeutralButton("Tampilkan semua") { _, _ ->
+                sheet.rows.forEach { it.hidden = false }
+                spreadsheetView.invalidate()
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
     private fun setupModeToggle() {
         findViewById<RadioGroup>(R.id.modeToggleExcel)?.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -163,13 +238,8 @@ class ExcelEditorActivity : AppCompatActivity() {
             formulaBar.setSelection(5)
             formulaBar.requestFocus()
         }
-        findViewById<View>(R.id.btnChart)?.setOnClickListener {
-            Toast.makeText(this, "Sisipkan Grafik - segera", Toast.LENGTH_SHORT).show()
-        }
-        findViewById<View>(R.id.btnFilter)?.setOnClickListener {
-            model.activeSheet.filterEnabled = !model.activeSheet.filterEnabled
-            Toast.makeText(this, if (model.activeSheet.filterEnabled) "Filter Aktif" else "Filter Mati", Toast.LENGTH_SHORT).show()
-        }
+        findViewById<View>(R.id.btnChart)?.setOnClickListener { showChartDialog() }
+        findViewById<View>(R.id.btnFilter)?.setOnClickListener { showFilterDialog() }
         findViewById<View>(R.id.btnPrintExcel)?.setOnClickListener { printSheet() }
         findViewById<View>(R.id.btnSaveExcel)?.setOnClickListener { saveFile() }
     }
@@ -204,7 +274,7 @@ class ExcelEditorActivity : AppCompatActivity() {
         try {
             exporter.export(model, out)
             currentFile = out
-            Snackbar.make(spreadsheetView, "✓ Disimpan: ${out.name}", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(spreadsheetView, "Tersimpan: ${out.name}", Snackbar.LENGTH_LONG).show()
         } catch (e: Exception) {
             Toast.makeText(this, "Gagal simpan: ${e.message}", Toast.LENGTH_LONG).show()
         }
@@ -241,7 +311,40 @@ class ExcelEditorActivity : AppCompatActivity() {
             android.R.id.home -> { finish(); true }
             R.id.action_save -> { saveFile(); true }
             R.id.action_print -> { printSheet(); true }
+            R.id.action_formula -> { formulaBar.requestFocus(); true }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }
+
+/** Custom bar chart sederhana untuk dialog grafik. */
+private class ChartView(
+    context: android.content.Context,
+    private val labels: List<String>,
+    private val values: List<Float>
+) : View(context) {
+    private val barPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#1A73E8") }
+    private val axisPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#9AA0A6"); textSize = 28f }
+    private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#5F6368"); textSize = 26f; textAlign = Paint.Align.CENTER }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), (420 * resources.displayMetrics.density).toInt())
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        val pad = 40f
+        val maxV = values.maxOrNull()?.takeIf { it > 0f } ?: 1f
+        val bw = (width - 2 * pad) / values.size
+        val base = height - 80f
+        canvas.drawLine(pad, base, width - pad, base, axisPaint)
+        values.forEachIndexed { i, v ->
+            val h = (base - pad) * (v / maxV)
+            val x = pad + i * bw + bw * 0.2f
+            canvas.drawRect(x, base - h, x + bw * 0.6f, base, barPaint)
+            canvas.drawText(labels.getOrNull(i) ?: "", x + bw * 0.3f, base + 36f, labelPaint)
+        }
+    }
+}
+

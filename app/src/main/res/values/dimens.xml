@@ -1,5 +1,10 @@
 <resources>
-    <dimen name="page_margin">16dp</dimen>
+    <dimen name="page_margin">20dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="radius_s">10dp</dimen>
+    <dimen name="radius_m">14dp</dimen>
+    <dimen name="radius_l">20dp</dimen>
+    <dimen name="card_pad">16dp</dimen>
+    <dimen name="icon_btn">40dp</dimen>
 </resources>

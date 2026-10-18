@@ -6,13 +6,59 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pilih Bahasa Handwriting" android:textStyle="bold" android:textSize="16sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bahasa tulisan tangan"
+        android:textStyle="bold"
+        android:textColor="@color/ink_900"
+        android:textSize="15sp" />
 
-    <com.google.android.material.card.MaterialCardView android:id="@+id/langId" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" app:cardCornerRadius="12dp">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🇮🇩 Bahasa Indonesia" android:padding="16dp" android:textSize="14sp" />
-    </com.google.android.material.card.MaterialCardView>
+    <LinearLayout
+        android:id="@+id/langId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_row"
+        android:padding="16dp"
+        android:layout_marginTop="16dp">
 
-    <com.google.android.material.card.MaterialCardView android:id="@+id/langEn" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" app:cardCornerRadius="12dp">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🇬🇧 English" android:padding="16dp" android:textSize="14sp" />
-    </com.google.android.material.card.MaterialCardView>
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_pi_book_open"
+            app:tint="@color/brand" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  Bahasa Indonesia"
+            android:textColor="@color/ink_900"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/langEn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_row"
+        android:padding="16dp"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_pi_book_open"
+            app:tint="@color/brand" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  English"
+            android:textColor="@color/ink_900"
+            android:textSize="14sp" />
+    </LinearLayout>
 </LinearLayout>
