@@ -95,7 +95,7 @@
     </style>
 
     <!-- FAB kotak ala cyberdeck -->
-    <style name="Widget.App.ExtendedFAB" parent="Widget.Material3.ExtendedFloatingActionButton">
+    <style name="Widget.App.ExtendedFAB" parent="Widget.Material3.ExtendedFloatingActionButton.Primary">
         <item name="backgroundTint">@color/ink_900</item>
         <item name="android:textColor">@color/invert_ink</item>
         <item name="iconTint">@color/invert_ink</item>
