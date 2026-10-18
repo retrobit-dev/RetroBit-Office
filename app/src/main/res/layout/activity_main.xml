@@ -14,8 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="@color/primary"
-            style="@style/Widget.Material3.Toolbar.Surface" />
+            app:titleTextColor="@color/primary" />
 
         <!-- Stylus Banner MatePad Mini -->
         <com.google.android.material.card.MaterialCardView
