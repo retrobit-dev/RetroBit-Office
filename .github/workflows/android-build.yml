@@ -7,9 +7,14 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       contents: write
       actions: read
@@ -19,14 +24,22 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      # Runner image sudah punya Android SDK (ANDROID_HOME). Hindari action eksternal
+      # yang bisa gagal; cukup terima lisensi & pastikan platform-34 ada.
+      - name: Prepare Android SDK
+        run: |
+          export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "SDK dir:"; ls "$ANDROID_HOME" || true
+          if [ -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" > /dev/null 2>&1 || true
+          fi
 
       - name: Setup Gradle 8.6
         uses: gradle/actions/setup-gradle@v3
@@ -34,26 +47,51 @@ jobs:
           gradle-version: 8.6
           cache-read-only: false
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew || echo "no gradlew, using gradle directly"
-
-      # Jika gradle-wrapper.jar belum ada, buat wrapper dari gradle yang terinstall
       - name: Generate Gradle Wrapper if missing
         run: |
           if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Generating wrapper..."
             gradle wrapper --gradle-version 8.6
-            chmod +x gradlew
           fi
-          ls -lh gradle/wrapper/
+          chmod +x gradlew
+          ls -lh gradle/wrapper/ || true
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace --info
+        id: build_debug
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug 2>&1 | tee build-debug.log
 
       - name: Build Release APK (unsigned)
-        run: ./gradlew assembleRelease --stacktrace
+        id: build_release
+        run: |
+          set -o pipefail
+          ./gradlew assembleRelease 2>&1 | tee build-release.log
+
+      # Karena log Actions tidak bisa diambil dari lingkungan tertentu, tampilkan
+      # ringkasan error sebagai annotations (terbaca via gh run view / API).
+      - name: Report build errors as annotations
+        if: failure()
+        run: |
+          cat build-debug.log build-release.log > all-build.log 2>/dev/null || true
+          if [ ! -s all-build.log ]; then
+            echo "::error::Tidak ada log build tercatat - kemungkinan gagal sebelum gradlew (cek step Prepare Android SDK / Setup Gradle)"
+            exit 0
+          fi
+          {
+            echo "### Build error summary"
+            echo '```'
+            grep -E "^e: |error:|Could not (find|resolve)|FAILURE:|Execution failed|What went wrong" all-build.log | head -100
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          # Emit tiap baris error sbg annotation (max 4000 char per annotation)
+          grep -E "^e: |error:|Could not (find|resolve)|Execution failed" all-build.log | head -60 | \
+            sed -E 's/(.{3500}).*/\1.../' | sed 's/^/::error::/'
+          # Cuplikan konteks sekitar "What went wrong"
+          awk '/What went wrong/{p=1} p{print; n++} n>15{exit}' all-build.log | head -16 | \
+            sed -E 's/(.{3500}).*/\1.../' | sed 's/^/::error::/'
 
       - name: Upload Debug APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: RetroBit-Office-debug-apk
@@ -61,6 +99,7 @@ jobs:
           retention-days: 30
 
       - name: Upload Release APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: RetroBit-Office-release-apk
@@ -68,12 +107,13 @@ jobs:
           retention-days: 30
 
       - name: Show APK info
+        if: success()
         run: |
           ls -lh app/build/outputs/apk/debug/ || true
           ls -lh app/build/outputs/apk/release/ || true
 
       - name: Create GitHub Release on tag
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: success() && startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: |
