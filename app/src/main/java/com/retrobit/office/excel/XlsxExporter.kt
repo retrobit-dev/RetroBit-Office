@@ -45,7 +45,7 @@ class XlsxExporter {
                     font.italic = cellModel.style.italic
                     font.underline = if (cellModel.style.underline) Font.U_SINGLE else Font.U_NONE
                     font.fontName = cellModel.style.fontName
-                    font.fontHeightInPoints = cellModel.style.fontSizePt.toShort()
+                    font.fontHeightInPoints = cellModel.style.fontSizePt.toInt().toShort()
                     // Color
                     try {
                         val xssfColor = org.apache.poi.xssf.usermodel.XSSFColor(
@@ -85,10 +85,10 @@ class XlsxExporter {
                         } catch (_: Exception) {}
                     }
                     // Border
-                    if (cellModel.style.border.top) poiStyle.borderTop = BorderStyle.THIN
-                    if (cellModel.style.border.bottom) poiStyle.borderBottom = BorderStyle.THIN
-                    if (cellModel.style.border.left) poiStyle.borderLeft = BorderStyle.THIN
-                    if (cellModel.style.border.right) poiStyle.borderRight = BorderStyle.THIN
+                    if (cellModel.style.border.top) poiStyle.borderTop = org.apache.poi.ss.usermodel.BorderStyle.THIN
+                    if (cellModel.style.border.bottom) poiStyle.borderBottom = org.apache.poi.ss.usermodel.BorderStyle.THIN
+                    if (cellModel.style.border.left) poiStyle.borderLeft = org.apache.poi.ss.usermodel.BorderStyle.THIN
+                    if (cellModel.style.border.right) poiStyle.borderRight = org.apache.poi.ss.usermodel.BorderStyle.THIN
 
                     // Number format
                     val fmt = when (cellModel.style.numberFormat) {
@@ -105,7 +105,7 @@ class XlsxExporter {
                     cell.cellStyle = poiStyle
 
                     // Column width
-                    sheet.setColumnWidth(cIdx, (sheetModel.cols.getOrNull(cIdx)?.widthDp ?: 96f) * 36f.toInt())
+                    sheet.setColumnWidth(cIdx, (((sheetModel.cols.getOrNull(cIdx)?.widthDp ?: 96f) * 36f).toInt()))
                 }
             }
 
@@ -139,7 +139,7 @@ class XlsxExporter {
 
     fun import(file: File): SpreadsheetModel {
         val model = SpreadsheetModel(sheetName = file.nameWithoutExtension)
-        File(file.inputStream()).use { fis ->
+        file.inputStream().use { fis ->
             val wb = XSSFWorkbook(fis)
             model.sheets.clear()
             for (sIdx in 0 until wb.numberOfSheets) {
@@ -150,7 +150,7 @@ class XlsxExporter {
                     val row = sheet.getRow(rIdx) ?: continue
                     val rowModel = Row(rIdx)
                     rowModel.cells.clear()
-                    for (cIdx in 0 until row.lastCellNum) {
+                    for (cIdx in 0 until row.lastCellNum.toInt()) {
                         val cell = row.getCell(cIdx) ?: run { rowModel.cells.add(Cell()); continue }
                         val value = when (cell.cellType) {
                             CellType.STRING -> cell.stringCellValue

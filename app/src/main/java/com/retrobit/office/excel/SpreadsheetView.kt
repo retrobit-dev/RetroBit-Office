@@ -50,7 +50,7 @@ class SpreadsheetView @JvmOverloads constructor(
     private val gridPaint = Paint().apply { color = Color.parseColor("#E0E0E0"); strokeWidth = 1f }
     private val headerPaint = Paint().apply { color = Color.parseColor("#F1F3F4") }
     private val headerTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3C4043"); textSize = 12f * resources.displayMetrics.density; textAlign = Paint.Align.CENTER; typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL) }
-    private val cellTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; textSize = 13f * resources.displayMetrics.density }
+    private val cellTextPaint = android.text.TextPaint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; textSize = 13f * resources.displayMetrics.density }
     private val selectionPaint = Paint().apply { color = Color.parseColor("#1A73E8"); style = Paint.Style.STROKE; strokeWidth = 3f }
     private val selectionFillPaint = Paint().apply { color = Color.parseColor("#E8F0FE") }
     private val handlePaint = Paint().apply { color = Color.parseColor("#1A73E8") }
