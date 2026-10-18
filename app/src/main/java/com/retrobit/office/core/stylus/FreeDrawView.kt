@@ -3,6 +3,7 @@ package com.retrobit.office.core.stylus
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import kotlin.math.abs
 
 /**
  * FreeDrawView - Tulisan bebas & gambar

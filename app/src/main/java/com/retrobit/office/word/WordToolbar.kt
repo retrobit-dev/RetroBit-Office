@@ -72,8 +72,8 @@ class WordToolbar @JvmOverloads constructor(
                 onTabSelected?.invoke(tab.text.toString())
                 showActionsForTab(tab.position)
             }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
         showActionsForTab(0)

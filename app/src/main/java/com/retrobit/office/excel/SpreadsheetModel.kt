@@ -112,9 +112,7 @@ data class CellStyle(
     var numberFormat: NumberFormat = NumberFormat.GENERAL,
     var border: CellBorder = CellBorder(),
     var wrapText: Boolean = false
-) {
-    fun copy() = this.copy()
-}
+)
 
 enum class CellAlignment { LEFT, CENTER, RIGHT, FILL }
 enum class VerticalAlignment { TOP, CENTER, BOTTOM }

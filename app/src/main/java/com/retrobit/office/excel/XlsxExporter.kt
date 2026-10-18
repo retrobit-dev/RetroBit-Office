@@ -45,7 +45,7 @@ class XlsxExporter {
                     font.italic = cellModel.style.italic
                     font.underline = if (cellModel.style.underline) Font.U_SINGLE else Font.U_NONE
                     font.fontName = cellModel.style.fontName
-                    font.fontHeightInPoints = cellModel.style.fontSizePt.toInt()
+                    font.fontHeightInPoints = cellModel.style.fontSizePt.toShort()
                     // Color
                     try {
                         val xssfColor = org.apache.poi.xssf.usermodel.XSSFColor(
@@ -66,9 +66,9 @@ class XlsxExporter {
                         else -> HorizontalAlignment.LEFT
                     }
                     poiStyle.verticalAlignment = when (cellModel.style.verticalAlignment) {
-                        VerticalAlignment.TOP -> VerticalAlignment.TOP
-                        VerticalAlignment.BOTTOM -> VerticalAlignment.BOTTOM
-                        else -> VerticalAlignment.CENTER
+                        VerticalAlignment.TOP -> org.apache.poi.ss.usermodel.VerticalAlignment.TOP
+                        VerticalAlignment.BOTTOM -> org.apache.poi.ss.usermodel.VerticalAlignment.BOTTOM
+                        else -> org.apache.poi.ss.usermodel.VerticalAlignment.CENTER
                     }
                     // BG
                     if (cellModel.style.bgColor != android.graphics.Color.WHITE) {

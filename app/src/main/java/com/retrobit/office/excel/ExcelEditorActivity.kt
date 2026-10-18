@@ -104,8 +104,9 @@ class ExcelEditorActivity : AppCompatActivity() {
 
     private fun commitFormula() {
         val text = formulaBar.text.toString()
-        val row = cellRef.text.filter { it.isDigit() }.toIntOrNull()?.minus(1) ?: 0
-        val colName = cellRef.text.filter { it.isLetter() }
+        val refText = cellRef.text.toString()
+        val row = refText.filter { it.isDigit() }.toIntOrNull()?.minus(1) ?: 0
+        val colName = refText.filter { it.isLetter() }
         val col = colName.fold(0) { acc, ch -> acc * 26 + (ch - 'A' + 1) } - 1
         if (text.startsWith("=")) {
             spreadsheetView.setCellFormula(row, col, text)
