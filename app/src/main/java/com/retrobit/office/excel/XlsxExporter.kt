@@ -151,7 +151,11 @@ class XlsxExporter {
                     val rowModel = Row(rIdx)
                     rowModel.cells.clear()
                     for (cIdx in 0 until row.lastCellNum.toInt()) {
-                        val cell = row.getCell(cIdx) ?: run { rowModel.cells.add(Cell()); continue }
+                        val cell = row.getCell(cIdx)
+                        if (cell == null) {
+                            rowModel.cells.add(Cell())
+                            continue
+                        }
                         val value = when (cell.cellType) {
                             CellType.STRING -> cell.stringCellValue
                             CellType.NUMERIC -> if (DateUtil.isCellDateFormatted(cell)) cell.localDateTimeCellValue.toString() else cell.numericCellValue.toString()

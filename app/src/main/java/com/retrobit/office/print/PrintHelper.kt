@@ -76,7 +76,7 @@ class PrintHelper(private val context: Context) {
 
     private fun printViaAdapter(jobName: String, html: String) {
         val adapter = object : PrintDocumentAdapter() {
-            override fun onLayout(oldAttrs: PrintAttributes?, newAttrs: PrintAttributes?, cancellation: PrintDocumentInfo?, resultCallback: LayoutResultCallback?, extras: android.os.Bundle?) {
+            override fun onLayout(oldAttrs: PrintAttributes?, newAttrs: PrintAttributes?, cancellation: android.os.CancellationSignal?, resultCallback: LayoutResultCallback?, extras: android.os.Bundle?) {
                 if (cancellation?.isCancelled == true) {
                     resultCallback?.onLayoutCancelled()
                     return

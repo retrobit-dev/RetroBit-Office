@@ -33,17 +33,19 @@ class DocxExporter(private val context: Context) {
             ps.heightMm to ps.widthMm
         }
         // Convert mm to twips (1/1440 inch)
-        pgSz.w = mmToTwips(wMm).toLong()
-        pgSz.h = mmToTwips(hMm).toLong()
-        pgSz.orient = if (document.pageSettings.orientation == Orientation.PORTRAIT)
-            org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation.PORTRAIT
-        else org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation.LANDSCAPE
+        pgSz.setW(java.math.BigInteger.valueOf(mmToTwips(wMm).toLong()))
+        pgSz.setH(java.math.BigInteger.valueOf(mmToTwips(hMm).toLong()))
+        pgSz.setOrient(
+            if (document.pageSettings.orientation == Orientation.PORTRAIT)
+                org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation.PORTRAIT
+            else org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation.LANDSCAPE
+        )
 
         val pgMar = sectPr.addNewPgMar()
-        pgMar.top = mmToTwips(document.pageSettings.marginTopMm).toLong()
-        pgMar.bottom = mmToTwips(document.pageSettings.marginBottomMm).toLong()
-        pgMar.left = mmToTwips(document.pageSettings.marginLeftMm).toLong()
-        pgMar.right = mmToTwips(document.pageSettings.marginRightMm).toLong()
+        pgMar.setTop(java.math.BigInteger.valueOf(mmToTwips(document.pageSettings.marginTopMm).toLong()))
+        pgMar.setBottom(java.math.BigInteger.valueOf(mmToTwips(document.pageSettings.marginBottomMm).toLong()))
+        pgMar.setLeft(java.math.BigInteger.valueOf(mmToTwips(document.pageSettings.marginLeftMm).toLong()))
+        pgMar.setRight(java.math.BigInteger.valueOf(mmToTwips(document.pageSettings.marginRightMm).toLong()))
 
         // Header
         if (document.headers.isNotEmpty()) {
@@ -93,9 +95,9 @@ class DocxExporter(private val context: Context) {
 
             // Bullet
             if (para.bullet == BulletStyle.BULLET) {
-                p.setNumID("1")
+                p.setNumID(java.math.BigInteger.valueOf(1))
             } else if (para.bullet == BulletStyle.NUMBER) {
-                p.setNumID("2")
+                p.setNumID(java.math.BigInteger.valueOf(2))
             }
 
             // Runs
@@ -158,8 +160,8 @@ class DocxExporter(private val context: Context) {
                 tempImg.inputStream(),
                 XWPFDocument.PICTURE_TYPE_PNG,
                 tempImg.name,
-                Units.toEMU(400.0), // width
-                Units.toEMU(200.0)  // height
+                Units.toEMU(400.0).toInt(), // width
+                Units.toEMU(200.0).toInt()  // height
             )
             tempImg.delete()
         }
