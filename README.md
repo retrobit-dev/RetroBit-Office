@@ -7,9 +7,10 @@
 ---
 
 ## 🎨 Desain & Ikon
-- **UI/UX clean** terinspirasi **GenOffice**: chrome tipis abu-abu terang, permukaan putih "kertas", kartu ber-shadow halus, toolbar kompak, home = pencarian + file terbaru, tombol aksi berbentuk chip/pill.
-- **Semua ikon = pixel-art** dari [pixelarticons](https://pixelarticons.com) v2.4.2 (MIT) yang dikonversi ke Android VectorDrawable (`tools/svg2vd.py`), ditambah 12 ikon custom bergaya sama (bold, italic, underline, tabel, slideshow, sigma, dll). Tidak ada emoji/ikon Material di UI.
-- Token desain di `values/colors.xml` (bg `#F6F7F9`, brand `#2E6BE6`, hijau `#1FA971`, oranye `#E8590C`), tipografi ringkas.
+- **Retro cyberdeck grayscale e-paper**, clean & minimalis: palet monokrom (kertas `#F4F4EC`, tinta `#1B1B18`), font **monospace**, sudut kotak, garis 1px, tanpa shadow, state aktif = **inversi hitam-putih**, status strip ala terminal.
+- **Sidebar tool di kiri** (ramah landscape): rail kategori vertikal + panel tool per kategori — **klik kategori untuk membuka/menutup tool-nya**, area dokumen dapat lebar penuh tanpa scroll horizontal.
+- **Semua ikon = pixel-art** dari [pixelarticons](https://pixelarticons.com) v2.4.2 (MIT) dikonversi ke VectorDrawable (`tools/svg2vd.py`) + 12 ikon custom bergaya sama. Tanpa emoji/ikon Material di UI.
+- Token desain di `values/colors.xml`; komponen `ui/ToolSidebar.kt` dipakai bersama ketiga editor.
 
 ## ✨ Fitur Utama
 
