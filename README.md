@@ -27,7 +27,7 @@
 - Elemen: TextBox, Gambar, Shape (Rect/Oval/Triangle/Diamond), Tabel, Chart (Bar/Pie)
 - Tema: Modern, Dark, Warm, Nature, Retro
 - Transisi slide, slideshow mode, duplicate/delete slide
-- Export **.pptx** via Apache POI (XSLF), Import .pptx
+- Export **.pptx** (OOXML native writer), Import .pptx
 
 ### ✏️ Dua Mode Stylus Huawei M-Pencil Pro
 
@@ -55,7 +55,7 @@
 
 - **Layar 8.8" OLED 165Hz** — rendering 165Hz, shadow & animasi halus
 - **M-Pencil Pro Gen-3** — 4096 pressure, tilt ±60°, hover 15mm
-- **HarmonyOS/Android** — HMS Pen SDK + GMS ML Kit dual engine
+- **HarmonyOS/Android** — ML Kit Digital Ink (HMS fallback via reflection)
 - **Multi-window & Freeform** — `supportsScreens` xlarge, `requestLegacyExternalStorage`
 - **File Provider** — berbagi .docx/.xlsx/.pptx via `FileProvider`
 
@@ -116,35 +116,46 @@ RetroBit-Office/
 
 ## 🔨 Build & Install
 
-### Prasyarat
-- Android Studio Hedgehog+
-- JDK 17
-- Huawei MatePad Mini / emulator (API 26+)
+### ✅ Build Otomatis via GitHub Actions (Disarankan!)
 
-### Build APK
+Setiap push ke `main` / `arena/**` otomatis build APK via workflow `.github/workflows/android-build.yml`:
+
+1. Buka tab **Actions** di repo GitHub → pilih run **"Build RetroBit Office APK"** terbaru (✓ success)
+2. Scroll ke bagian **Artifacts**
+3. Download **`RetroBit-Office-debug-apk`** (untuk install langsung) atau **`RetroBit-Office-release-apk`**
+4. Install ke MatePad Mini:
+   ```bash
+   adb install RetroBit-Office-debug-apk/app-debug.apk
+   ```
+   atau copy file APK ke tablet lalu buka dari File Manager.
+
+**Rilis otomatis:** buat tag `v1.0.0` lalu push → APK otomatis di-upload ke GitHub Release.
+
+> Butuh APK terbaru? Cukup `git push` — build selesai ±5 menit.
+
+### Build Lokal (Android Studio)
+
+**Prasyarat:** Android Studio Hedgehog+, JDK 17.
+
 ```bash
 ./gradlew assembleDebug
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Build Release (signed)
-```bash
-./gradlew assembleRelease
-```
-
 ### Dependencies utama (`app/build.gradle.kts`)
 ```kotlin
-// Huawei
-implementation("com.huawei.hms:pen:6.0.0.300")
-implementation("com.huawei.hms:ml-computer-vision-handwriting:3.11.0.302")
-// ML Kit
+// ML Kit - Handwriting -> Teks
 implementation("com.google.mlkit:digital-ink-recognition:18.1.0")
-// Apache POI - Office files
+implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+// Apache POI - Office files (.docx/.xlsx)
 implementation("org.apache.poi:poi:5.2.5")
 implementation("org.apache.poi:poi-ooxml:5.2.5")
-implementation("com.github.oleg-cherednik:poi-ooxml-android:5.2.2")
-// AndroidX + Material3, Coroutines, etc
+// AndroidX + Material3 + Coroutines
 ```
+
+> **Catatan teknis:** Export .pptx memakai OOXML writer manual (tanpa XSLF) agar bebas
+> dependensi `java.awt` yang tidak ada di Android. .docx/.xlsx via Apache POI XSSF/XWPF.
+> Handwriting engine: Google ML Kit Digital Ink (fallback HMS via reflection).
 
 ---
 
