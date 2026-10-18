@@ -44,31 +44,40 @@
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp">
 
-                <com.google.android.material.button.MaterialButton
+                <ImageButton
                     android:id="@+id/btnLanguage"
-                    style="@style/Widget.App.Pill"
-                    android:layout_width="wrap_content"
+                    android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:text="ID"
-                    app:icon="@drawable/ic_pi_book_open" />
+                    android:src="@drawable/ic_pi_book_open"
+                    android:background="@drawable/bg_circle"
+                    android:padding="6dp"
+                    app:tint="@color/ink_900"
+                    android:tooltipText="Bahasa tulisan tangan"
+                    android:contentDescription="Bahasa tulisan tangan" />
 
-                <com.google.android.material.button.MaterialButton
+                <ImageButton
                     android:id="@+id/btnConvertNow"
-                    style="@style/Widget.App.Pill"
-                    android:layout_width="wrap_content"
+                    android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="6dp"
-                    android:text="Konversi"
-                    app:icon="@drawable/ic_pi_check" />
+                    android:src="@drawable/ic_pi_check"
+                    android:background="@drawable/bg_circle"
+                    android:padding="6dp"
+                    app:tint="@color/ink_900"
+                    android:tooltipText="Konversi tulisan ke teks"
+                    android:contentDescription="Konversi tulisan ke teks" />
 
-                <com.google.android.material.button.MaterialButton
+                <ImageButton
                     android:id="@+id/btnClearInk"
-                    style="@style/Widget.App.Pill"
-                    android:layout_width="wrap_content"
+                    android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="6dp"
-                    android:text="Hapus"
-                    app:icon="@drawable/ic_pi_trash" />
+                    android:src="@drawable/ic_pi_trash"
+                    android:background="@drawable/bg_circle"
+                    android:padding="6dp"
+                    app:tint="@color/ink_900"
+                    android:tooltipText="Hapus tinta"
+                    android:contentDescription="Hapus tinta" />
 
                 <SeekBar
                     android:id="@+id/seekStrokeWidth"
