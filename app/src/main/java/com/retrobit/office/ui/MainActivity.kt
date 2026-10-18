@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
@@ -39,9 +38,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Office cards
-        findViewById<CardView>(R.id.cardWord)?.setOnClickListener { openWord() }
-        findViewById<CardView>(R.id.cardExcel)?.setOnClickListener { openExcel() }
-        findViewById<CardView>(R.id.cardPowerPoint)?.setOnClickListener { openPowerPoint() }
+        findViewById<View>(R.id.cardWord)?.setOnClickListener { openWord() }
+        findViewById<View>(R.id.cardExcel)?.setOnClickListener { openExcel() }
+        findViewById<View>(R.id.cardPowerPoint)?.setOnClickListener { openPowerPoint() }
 
         findViewById<View>(R.id.btnNewWord)?.setOnClickListener { openWord() }
         findViewById<View>(R.id.btnNewExcel)?.setOnClickListener { openExcel() }

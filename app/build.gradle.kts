@@ -20,9 +20,20 @@ android {
         }
     }
 
+    signingConfigs {
+        create("retrobit") {
+            storeFile = rootProject.file("keystore/retrobit.p12")
+            storePassword = "retrobit-office"
+            keyAlias = "retrobit"
+            keyPassword = "retrobit-office"
+            storeType = "PKCS12"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("retrobit")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -30,6 +41,7 @@ android {
         }
         debug {
             isDebuggable = true
+            signingConfig = signingConfigs.getByName("retrobit")
         }
     }
 

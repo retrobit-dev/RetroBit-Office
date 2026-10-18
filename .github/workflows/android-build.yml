@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
       contents: write
@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -29,8 +29,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Runner image sudah punya Android SDK (ANDROID_HOME). Hindari action eksternal
-      # yang bisa gagal; cukup terima lisensi & pastikan platform-34 ada.
+      # Runner image sudah punya Android SDK (ANDROID_HOME). Cukup terima lisensi
+      # & pastikan platform-34 ada.
       - name: Prepare Android SDK
         run: |
           export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
@@ -41,27 +41,29 @@ jobs:
             "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" > /dev/null 2>&1 || true
           fi
 
-      - name: Setup Gradle 8.6
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.6
-          cache-read-only: false
-
+      # Tanpa gradle/actions/setup-gradle: hindari warning cache service & Node 20.
+      # Gradle 8.6 diambil lewat wrapper (system gradle / unduh langsung saat generate).
       - name: Generate Gradle Wrapper if missing
         run: |
           if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            gradle wrapper --gradle-version 8.6
+            if command -v gradle > /dev/null 2>&1; then
+              gradle wrapper --gradle-version 8.6
+            else
+              curl -fsSL -o /tmp/gradle-8.6-bin.zip https://services.gradle.org/distributions/gradle-8.6-bin.zip
+              unzip -q /tmp/gradle-8.6-bin.zip -d /tmp
+              /tmp/gradle-8.6/bin/gradle wrapper --gradle-version 8.6
+            fi
           fi
           chmod +x gradlew
           ls -lh gradle/wrapper/ || true
 
-      - name: Build Debug APK
+      - name: Build Debug APK (signed)
         id: build_debug
         run: |
           set -o pipefail
           ./gradlew assembleDebug 2>&1 | tee build-debug.log
 
-      - name: Build Release APK (unsigned)
+      - name: Build Release APK (signed)
         id: build_release
         run: |
           set -o pipefail
@@ -74,7 +76,7 @@ jobs:
         run: |
           cat build-debug.log build-release.log > all-build.log 2>/dev/null || true
           if [ ! -s all-build.log ]; then
-            echo "::error::Tidak ada log build tercatat - kemungkinan gagal sebelum gradlew (cek step Prepare Android SDK / Setup Gradle)"
+            echo "::error::Tidak ada log build tercatat - kemungkinan gagal sebelum gradlew (cek step Prepare Android SDK / Generate Gradle Wrapper)"
             exit 0
           fi
           {
@@ -83,16 +85,14 @@ jobs:
             grep -E "^e: |error:|Could not (find|resolve)|FAILURE:|Execution failed|What went wrong" all-build.log | head -100
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          # Emit tiap baris error sbg annotation (max 4000 char per annotation)
           grep -E "^e: |error:|Could not (find|resolve)|Execution failed" all-build.log | head -60 | \
             sed -E 's/(.{3500}).*/\1.../' | sed 's/^/::error::/'
-          # Cuplikan konteks sekitar "What went wrong"
           awk '/What went wrong/{p=1} p{print; n++} n>15{exit}' all-build.log | head -16 | \
             sed -E 's/(.{3500}).*/\1.../' | sed 's/^/::error::/'
 
       - name: Upload Debug APK
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: RetroBit-Office-debug-apk
           path: app/build/outputs/apk/debug/*.apk
@@ -100,7 +100,7 @@ jobs:
 
       - name: Upload Release APK
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: RetroBit-Office-release-apk
           path: app/build/outputs/apk/release/*.apk
@@ -114,7 +114,7 @@ jobs:
 
       - name: Create GitHub Release on tag
         if: success() && startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             app/build/outputs/apk/debug/*.apk
