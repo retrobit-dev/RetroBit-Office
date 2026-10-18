@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F1F3F4">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Word - RetroBit Office" />
+
+        <!-- Word Toolbar Tabs -->
+        <com.retrobit.office.word.WordToolbar
+            android:id="@+id/wordToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Mode Toggle -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="white"
+            android:padding="8dp"
+            android:gravity="center_vertical">
+
+            <RadioGroup
+                android:id="@+id/modeToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/modeHandwriting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✍️ Tulisan → Teks"
+                    android:checked="true"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/modeFreeDraw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🎨 Bebas"
+                    android:textSize="12sp"
+                    android:layout_marginStart="12dp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/stylusStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mode: Tulisan → Teks"
+                android:textSize="11sp"
+                android:textColor="@color/primary"
+                android:background="#E8F0FE"
+                android:padding="8dp" />
+
+            <ImageButton
+                android:id="@+id/btnPrint"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Print" />
+        </LinearLayout>
+
+        <!-- Handwriting controls -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#E8F0FE"
+            android:padding="6dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="ID"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:textSize="11sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnConvertNow"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="→ Teks"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_marginStart="8dp"
+                android:textSize="11sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClearInk"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Hapus Ink"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_marginStart="8dp"
+                android:textSize="11sp" />
+
+            <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+
+            <SeekBar
+                android:id="@+id/seekStrokeWidth"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:max="20"
+                android:progress="6" />
+        </LinearLayout>
+
+        <!-- Color palette -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="white">
+
+            <LinearLayout
+                android:id="@+id/colorPalette"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp" />
+        </HorizontalScrollView>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Editor Area -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="800dp">
+
+            <com.retrobit.office.word.WordEditorView
+                android:id="@+id/wordEditorView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F1F3F4" />
+
+            <!-- Handwriting overlay (transparent, captures stylus to convert) -->
+            <com.retrobit.office.core.stylus.HandwritingView
+                android:id="@+id/handwritingView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#0D000000" />
+
+            <!-- Free draw overlay -->
+            <com.retrobit.office.core.stylus.FreeDrawView
+                android:id="@+id/freeDrawView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:background="@android:color/transparent" />
+
+            <!-- Candidate bar -->
+            <LinearLayout
+                android:id="@+id/candidateBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="#E8F0FE"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:layout_gravity="bottom" />
+
+            <!-- Free draw controls -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="8dp">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btnPen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_edit"
+                    app:tint="white"
+                    android:layout_marginBottom="8dp"
+                    app:fabSize="small" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btnEraser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    app:tint="white"
+                    app:fabSize="small"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btnUndoInk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_revert"
+                    app:fabSize="small"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btnClearFree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_delete"
+                    app:fabSize="small" />
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_menu_save"
+        android:contentDescription="Simpan" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_menu_share"
+        app:fabSize="small" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

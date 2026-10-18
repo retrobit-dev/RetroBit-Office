@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">RetroBit Office</string>
+    <string name="word">Word</string>
+    <string name="excel">Excel</string>
+    <string name="powerpoint">PowerPoint</string>
+    <string name="mode_handwriting">Tulisan → Teks</string>
+    <string name="mode_freedraw">Tulisan Bebas</string>
+    <string name="save">Simpan</string>
+    <string name="print">Cetak</string>
+    <string name="share">Bagikan</string>
+    <string name="stylus_ready">✏️ M-Pencil Siap</string>
+    <string name="matepad_optimized">Dioptimalkan untuk Huawei MatePad Mini</string>
+    <string name="create_new">Buat Baru</string>
+    <string name="recent_files">File Terbaru</string>
+    <string name="no_files">Belum ada dokumen</string>
+</resources>

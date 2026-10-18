@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:gravity="center">
+        <TextView android:id="@+id/fileIcon" android:layout_width="64dp" android:layout_height="64dp" android:gravity="center" android:text="📄" android:textSize="32sp" android:background="#F1F3F4" />
+        <TextView android:id="@+id/fileName" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Dokumen.docx" android:textStyle="bold" android:maxLines="2" android:ellipsize="end" android:gravity="center" android:layout_marginTop="8dp" android:textSize="12sp" />
+        <TextView android:id="@+id/fileMeta" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 KB" android:textSize="10sp" android:textColor="#5F6368" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

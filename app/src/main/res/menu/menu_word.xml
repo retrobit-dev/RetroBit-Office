@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_save" android:title="Simpan" android:icon="@android:drawable/ic_menu_save" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_print" android:title="Cetak" android:icon="@android:drawable/ic_menu_sort_by_size" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_export_pdf" android:title="Export PDF" app:showAsAction="never"/>
+    <item android:id="@+id/action_share" android:title="Bagikan" app:showAsAction="never"/>
+</menu>
