@@ -171,7 +171,7 @@ class WordToolbar @JvmOverloads constructor(
         btn.text = label
         btn.textSize = 10f
         btn.setTextColor(Color.parseColor("#17181A"))
-        btn.setIcon(iconRes)
+        btn.setIconResource(iconRes)
         btn.iconSize = (20 * resources.displayMetrics.density).toInt()
         btn.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
         btn.iconPadding = 8

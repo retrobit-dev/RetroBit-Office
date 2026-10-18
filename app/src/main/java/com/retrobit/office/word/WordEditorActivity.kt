@@ -463,11 +463,6 @@ class WordEditorActivity : AppCompatActivity() {
         try { startActivity(intent) } catch (_: Exception) { Toast.makeText(this, file.absolutePath, Toast.LENGTH_LONG).show() }
     }
 
-    private fun pickImage() {
-        // TODO: Image picker
-        Toast.makeText(this, "Pilih gambar: fitur segera hadir", Toast.LENGTH_SHORT).show()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_word, menu)
         return true
