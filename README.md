@@ -126,6 +126,8 @@ RetroBit-Office/
 
 Setiap push ke `main` / `arena/**` otomatis build APK via workflow `.github/workflows/android-build.yml`:
 
+> **APK sudah ditandatangani** (keystore `keystore/retrobit.p12`, alias `retrobit`) — kedua artefak langsung bisa diinstal, dan bisa di-update tanpa uninstall karena tanda tangan sama di setiap run.
+
 1. Buka tab **Actions** di repo GitHub → pilih run **"Build RetroBit Office APK"** terbaru (✓ success)
 2. Scroll ke bagian **Artifacts**
 3. Download **`RetroBit-Office-debug-apk`** (untuk install langsung) atau **`RetroBit-Office-release-apk`**
