@@ -134,6 +134,6 @@
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_menu_save"
-        app:fabSize="small" />
+        app:fabSize="mini" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

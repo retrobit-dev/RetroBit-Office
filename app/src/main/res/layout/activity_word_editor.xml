@@ -191,7 +191,7 @@
                     android:src="@android:drawable/ic_menu_edit"
                     app:tint="#FFFFFF"
                     android:layout_marginBottom="8dp"
-                    app:fabSize="small" />
+                    app:fabSize="mini" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btnEraser"
@@ -199,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:src="@android:drawable/ic_menu_close_clear_cancel"
                     app:tint="#FFFFFF"
-                    app:fabSize="small"
+                    app:fabSize="mini"
                     android:layout_marginBottom="8dp" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -207,7 +207,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@android:drawable/ic_menu_revert"
-                    app:fabSize="small"
+                    app:fabSize="mini"
                     android:layout_marginBottom="8dp" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -215,7 +215,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@android:drawable/ic_menu_delete"
-                    app:fabSize="small" />
+                    app:fabSize="mini" />
             </LinearLayout>
         </FrameLayout>
     </androidx.core.widget.NestedScrollView>
@@ -236,6 +236,6 @@
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_menu_share"
-        app:fabSize="small" />
+        app:fabSize="mini" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
