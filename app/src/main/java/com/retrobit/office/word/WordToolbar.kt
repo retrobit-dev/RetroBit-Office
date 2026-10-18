@@ -160,7 +160,7 @@ class WordToolbar @JvmOverloads constructor(
     }
 
     private fun addToggleButton(text: String, bold: Boolean = false, italic: Boolean = false, underline: Boolean = false, onChecked: (Boolean) -> Unit) {
-        val btn = MaterialButton(context, null, com.google.android.material.R.attr.materialButtonOutlinedButtonStyle).apply {
+        val btn = MaterialButton(context).apply {
             this.text = text
             isCheckable = true
             setPadding(18, 8, 18, 8)
@@ -177,7 +177,7 @@ class WordToolbar @JvmOverloads constructor(
     }
 
     private fun addActionButton(text: String, onClick: () -> Unit = {}) {
-        val btn = MaterialButton(context, null, com.google.android.material.R.attr.materialButtonOutlinedButtonStyle).apply {
+        val btn = MaterialButton(context).apply {
             this.text = text
             setPadding(16, 8, 16, 8)
             textSize = 12f
