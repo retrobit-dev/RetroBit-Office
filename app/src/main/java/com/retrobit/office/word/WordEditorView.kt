@@ -55,7 +55,7 @@ class WordEditorView @JvmOverloads constructor(
     private val pagePadding = 32f
     private var pageRect = RectF()
 
-    fun setDocument(doc: WordDocument) {
+    fun bindDocument(doc: WordDocument) {
         document = doc
         invalidate()
         requestLayout()

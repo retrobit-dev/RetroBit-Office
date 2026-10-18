@@ -76,7 +76,7 @@ class WordEditorActivity : AppCompatActivity() {
         modeToggle = findViewById(R.id.modeToggle)
         stylusStatus = findViewById(R.id.stylusStatus)
 
-        editorView.setDocument(document)
+        editorView.bindDocument(document)
         editorView.onDocumentChanged = { doc -> document = doc }
 
         setupModeToggle()
