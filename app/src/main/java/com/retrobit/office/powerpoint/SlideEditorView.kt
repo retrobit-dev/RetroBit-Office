@@ -364,7 +364,7 @@ class SlideEditorView @JvmOverloads constructor(
         return true
     }
 
-    fun bringToFront(): Boolean {
+    fun bringElementToFront(): Boolean {
         val el = selectedElement ?: return false
         slide.elements.remove(el)
         slide.elements.add(el)
@@ -372,7 +372,7 @@ class SlideEditorView @JvmOverloads constructor(
         return true
     }
 
-    fun sendToBack(): Boolean {
+    fun sendElementToBack(): Boolean {
         val el = selectedElement ?: return false
         slide.elements.remove(el)
         slide.elements.add(0, el)

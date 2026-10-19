@@ -269,8 +269,8 @@ class PowerPointEditorActivity : AppCompatActivity() {
             "align_l" -> editText { it.alignment = 0 }
             "align_c" -> editText { it.alignment = 1 }
             "align_r" -> editText { it.alignment = 2 }
-            "front" -> if (!slideView.bringToFront()) needSelection()
-            "back" -> if (!slideView.sendToBack()) needSelection()
+            "front" -> if (!slideView.bringElementToFront()) needSelection()
+            "back" -> if (!slideView.sendElementToBack()) needSelection()
             "dup_element" -> if (!slideView.duplicateSelected()) needSelection()
             "del_element" -> if (!slideView.removeSelected()) needSelection()
             "pen" -> {
