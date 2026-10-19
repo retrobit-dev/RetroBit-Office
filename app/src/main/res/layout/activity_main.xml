@@ -87,7 +87,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Keyboard + M-Pencil — ketik teks, gambar bebas & anotasi"
+                    android:text="Keyboard + M-Pencil — ketik teks, gambar bebas &amp; anotasi"
                     android:textColor="@color/ink_600"
                     android:textSize="11sp"
                     android:layout_marginStart="8dp" />
