@@ -35,6 +35,10 @@ class ExcelEditorActivity : AppCompatActivity() {
     private val redoStack = ArrayDeque<Sheet>()
 
     private val exporter = XlsxExporter()
+
+    companion object {
+        private const val REQ_OPEN_XLSX = 61
+    }
     private val printHelper by lazy { PrintHelper(this) }
 
     private val sheet: Sheet get() = model.activeSheet
@@ -92,15 +96,16 @@ class ExcelEditorActivity : AppCompatActivity() {
         setupToolbar()
     }
 
-    private fun seedSample() {
-        sheet.setCell(0, 0, "RetroBit Office", CellStyle(bold = true, bgColor = Color.parseColor("#1B1B18"), fontColor = Color.WHITE))
-        sheet.setCell(0, 1, "Penjualan", CellStyle(bold = true, bgColor = Color.parseColor("#1B1B18"), fontColor = Color.WHITE))
-        sheet.setCell(1, 0, "Januari")
-        sheet.setCell(1, 1, "1500000")
-        sheet.setCell(2, 0, "Februari")
-        sheet.setCell(2, 1, "2300000")
-        sheet.setCell(3, 0, "Total")
-        sheet.setFormula(3, 1, "=SUM(B2:B3)")
+    private fun seedSample(targetSheet: Sheet? = null) {
+        val target = targetSheet ?: sheet
+        target.setCell(0, 0, "RetroBit Office", CellStyle(bold = true, bgColor = Color.parseColor("#1B1B18"), fontColor = Color.WHITE))
+        target.setCell(0, 1, "Penjualan", CellStyle(bold = true, bgColor = Color.parseColor("#1B1B18"), fontColor = Color.WHITE))
+        target.setCell(1, 0, "Januari")
+        target.setCell(1, 1, "1500000")
+        target.setCell(2, 0, "Februari")
+        target.setCell(2, 1, "2300000")
+        target.setCell(3, 0, "Total")
+        target.setFormula(3, 1, "=SUM(B2:B3)")
     }
 
     private fun commitFormula() {
@@ -136,6 +141,8 @@ class ExcelEditorActivity : AppCompatActivity() {
         val sidebar = findViewById<com.retrobit.office.ui.ToolSidebar>(R.id.toolSidebar)
         sidebar.setCategories(listOf(
             cat("file", R.drawable.ic_pi_save, "BERKAS", listOf(
+                tool("new", R.drawable.ic_pi_file_text, "Baru"),
+                tool("open", R.drawable.ic_pi_folder_plus, "Buka"),
                 tool("save", R.drawable.ic_pi_save, "Simpan"),
                 tool("print", R.drawable.ic_pi_printer, "Cetak"),
                 tool("share", R.drawable.ic_pi_share, "Bagikan")
@@ -199,6 +206,8 @@ class ExcelEditorActivity : AppCompatActivity() {
 
     private fun handleTool(toolId: String) {
         when (toolId) {
+            "new" -> newSpreadsheet()
+            "open" -> pickXlsx()
             "save" -> saveFile()
             "print" -> printSheet()
             "share" -> shareFile()
@@ -522,6 +531,60 @@ class ExcelEditorActivity : AppCompatActivity() {
     }
 
     // ---------- File ----------
+
+    private fun newSpreadsheet() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Spreadsheet baru")
+            .setMessage("Data saat ini akan diganti. Simpan dulu jika perlu.")
+            .setPositiveButton("Buat") { _, _ ->
+                val fresh = SpreadsheetModel()
+                seedSample(fresh.activeSheet)
+                model = fresh
+                currentFile = null
+                undoStack.clear()
+                redoStack.clear()
+                spreadsheetView.model = sheet
+                spreadsheetView.selectCell(0, 0)
+                refreshFormulaBar()
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    private fun pickXlsx() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }
+        try {
+            startActivityForResult(intent, REQ_OPEN_XLSX)
+        } catch (_: Exception) {
+            Toast.makeText(this, "Tidak ada pengelola berkas", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQ_OPEN_XLSX || resultCode != RESULT_OK) return
+        val uri = data?.data ?: return
+        try {
+            val input = contentResolver.openInputStream(uri) ?: return
+            val tmp = File(cacheDir, "import_${System.currentTimeMillis()}.xlsx")
+            tmp.outputStream().use { o -> input.copyTo(o) }
+            input.close()
+            model = exporter.import(tmp)
+            currentFile = tmp
+            supportActionBar?.title = "Excel - ${tmp.name}"
+            undoStack.clear()
+            redoStack.clear()
+            spreadsheetView.model = sheet
+            spreadsheetView.selectCell(0, 0)
+            refreshFormulaBar()
+            Toast.makeText(this, "Dibuka: ${tmp.name}", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Gagal buka XLSX: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
 
     private fun saveFile() {
         val name = currentFile?.name ?: "Spreadsheet_${System.currentTimeMillis()}.xlsx"

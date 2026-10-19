@@ -42,6 +42,7 @@ class PowerPointEditorActivity : AppCompatActivity() {
 
     companion object {
         private const val REQ_PICK_IMAGE = 51
+        private const val REQ_OPEN_PPTX = 52
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,6 +156,8 @@ class PowerPointEditorActivity : AppCompatActivity() {
         val sidebar = findViewById<com.retrobit.office.ui.ToolSidebar>(R.id.toolSidebar)
         sidebar.setCategories(listOf(
             cat("file", R.drawable.ic_pi_save, "BERKAS", listOf(
+                tool("new", R.drawable.ic_pi_file_text, "Baru"),
+                tool("open", R.drawable.ic_pi_folder_plus, "Buka"),
                 tool("save", R.drawable.ic_pi_save, "Simpan"),
                 tool("print", R.drawable.ic_pi_printer, "Cetak"),
                 tool("share", R.drawable.ic_pi_share, "Bagikan"),
@@ -219,6 +222,8 @@ class PowerPointEditorActivity : AppCompatActivity() {
 
     private fun handleTool(toolId: String) {
         when (toolId) {
+            "new" -> newPresentation()
+            "open" -> pickPptx()
             "save" -> savePresentation()
             "print" -> printPresentation()
             "share" -> sharePresentation()
@@ -420,6 +425,26 @@ class PowerPointEditorActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQ_OPEN_PPTX && resultCode == RESULT_OK) {
+            val uri = data?.data ?: return
+            try {
+                val input = contentResolver.openInputStream(uri) ?: return
+                val tmp = File(cacheDir, "import_${System.currentTimeMillis()}.pptx")
+                tmp.outputStream().use { o -> input.copyTo(o) }
+                input.close()
+                presentation = exporter.import(tmp)
+                currentFile = tmp
+                supportActionBar?.title = "PowerPoint - ${tmp.name}"
+                slideInk.clear()
+                inkSlideId = null
+                setupThumbnails()
+                showSlide(0)
+                Toast.makeText(this, "Dibuka: ${tmp.name}", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this, "Gagal buka PPTX: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+            return
+        }
         if (requestCode == REQ_PICK_IMAGE && resultCode == RESULT_OK) {
             val uri = data?.data ?: return
             try {
@@ -437,6 +462,35 @@ class PowerPointEditorActivity : AppCompatActivity() {
     }
 
     // ---------- Pickers ----------
+
+    private fun newPresentation() {
+        AlertDialog.Builder(this)
+            .setTitle("Presentasi baru")
+            .setMessage("Presentasi saat ini akan diganti. Simpan dulu jika perlu.")
+            .setPositiveButton("Buat") { _, _ ->
+                presentation = Presentation()
+                currentFile = null
+                slideInk.clear()
+                inkSlideId = null
+                setupThumbnails()
+                showSlide(0)
+                supportActionBar?.title = "PowerPoint - RetroBit Office"
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    private fun pickPptx() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        }
+        try {
+            startActivityForResult(intent, REQ_OPEN_PPTX)
+        } catch (_: Exception) {
+            Toast.makeText(this, "Tidak ada pengelola berkas", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun showThemePicker() {
         val dialog = BottomSheetDialog(this)

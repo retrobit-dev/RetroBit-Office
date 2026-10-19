@@ -25,7 +25,7 @@
 - Tampilan: zoom, cari teks, statistik kata, lompat paragraf atas/bawah.
 - Export/import **.docx** (Apache POI), cetak, bagikan; anotasi tinta bebas di halaman.
 
-### 📊 Excel (Spreadsheet .xlsx) — 42 tool
+### 📊 Excel (Spreadsheet .xlsx) — 44 tool
 - **Keyboard-first**: ketuk sel → ketik di **formula bar** → tombol ✓ / `Done` menerapkan.
 - **8 kategori toolbar**: `BERKAS`, `EDIT`, `FONT`, `RATA`, `ANGKA`, `SEL`, `DATA`, `TAMPILAN`.
 - Format sel: tebal/miring/garis bawah, warna teks, warna isi, ukuran font, rata + lipat teks, border, reset format.
@@ -35,7 +35,7 @@
 - Rumus Excel (`=SUM`, `=AVERAGE`, `=MAX`, `=MIN`, `=COUNT`, aritmatika) + rekalkulasi otomatis.
 - Undo/redo, potong/salin/tempel, zoom, toggle gridline, export/import **.xlsx**, cetak, bagikan.
 
-### 📽 PowerPoint (Presentasi .pptx) — 34 tool
+### 📽 PowerPoint (Presentasi .pptx) — 36 tool
 - **5 kategori toolbar**: `BERKAS`, `SLIDE`, `SISIPKAN`, `FORMAT`, `CORET`.
 - Teks diedit lewat **dialog keyboard** (ketuk text box), mendukung tebal/miring/garis bawah, ukuran, warna, rata.
 - Sisipkan: teks, shape (7 bentuk), tabel (baris×kolom), grafik, gambar galeri.
