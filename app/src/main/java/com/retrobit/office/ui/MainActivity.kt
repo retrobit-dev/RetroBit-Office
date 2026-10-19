@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         // Huawei MatePad Mini - Stylus banner
         findViewById<View>(R.id.stylusBanner)?.setOnClickListener {
-            Toast.makeText(this, "M-Pencil siap: gunakan untuk menulis langsung di dokumen", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "M-Pencil siap: gunakan mode GAMBAR untuk anotasi", Toast.LENGTH_LONG).show()
         }
 
         // Office cards

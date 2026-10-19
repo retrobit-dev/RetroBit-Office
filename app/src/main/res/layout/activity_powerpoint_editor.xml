@@ -79,18 +79,7 @@
                 android:fontFamily="monospace"
                 android:textColor="@color/seg_tint" />
 
-            <RadioButton
-                android:id="@+id/modeInkText"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:background="@drawable/bg_segment_item"
-                android:gravity="center"
-                android:text="Teks"
-                android:textSize="9sp"
-                android:fontFamily="monospace"
-                android:textColor="@color/seg_tint" />
+
         </RadioGroup>
 
         <!-- Slide editor -->
@@ -112,13 +101,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone" />
-
-            <com.retrobit.office.core.stylus.HandwritingView
-                android:id="@+id/handwritingOverlayPpt"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="#141B1B18" />
         </FrameLayout>
 
         <!-- Status strip: navigasi -->

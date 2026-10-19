@@ -9,45 +9,52 @@
 ## 🎨 Desain & Ikon
 - **Retro cyberdeck grayscale e-paper**, clean & minimalis: palet monokrom (kertas `#F4F4EC`, tinta `#1B1B18`), font **monospace**, sudut kotak, garis 1px, tanpa shadow, state aktif = **inversi hitam-putih**, status strip ala terminal.
 - **Sidebar tool di kiri** (ramah landscape): rail kategori vertikal + panel tool per kategori — **klik kategori untuk membuka/menutup tool-nya**, area dokumen dapat lebar penuh tanpa scroll horizontal.
-- **Semua ikon = pixel-art** dari [pixelarticons](https://pixelarticons.com) v2.4.2 (MIT) dikonversi ke VectorDrawable (`tools/svg2vd.py`) + 12 ikon custom bergaya sama. Tanpa emoji/ikon Material di UI.
+- **Semua ikon = pixel-art** dari [pixelarticons](https://pixelarticons.com) v2.4.2 (MIT) dikonversi ke VectorDrawable (`tools/svg2vd.py`) + ikon custom bergaya sama. Tanpa emoji/ikon Material di UI.
+- **Label kecil di bawah setiap ikon** (rail kategori + tile tool) agar fungsi langsung terbaca tanpa membuka tooltip.
 - Token desain di `values/colors.xml`; komponen `ui/ToolSidebar.kt` dipakai bersama ketiga editor.
 
 ## ✨ Fitur Utama
 
-### 📝 Word (Dokumen .docx)
-- Toolbar lengkap mirip MS Word: **Beranda, Sisipkan, Gambar, Tata Letak, Tinjau, Tampilan**
-- Format: Bold, Italic, Underline, Warna, Font size, Alignment, Bullet/Numbering, Spasi
-- Header/Footer, Margin, Orientasi (Portrait/Landscape), Ukuran kertas A4/Folio/Legal
-- Export **.docx** via Apache POI (kompatibel MS Word), Import .docx, HTML Preview
-- Halaman dengan pagination, word count
+### 📝 Word (Dokumen .docx) — 51 tool
+- **Keyboard-first**: ketuk paragraf di halaman → bar input di bawah aktif → ketik langsung; `Enter`/`Done` membuat paragraf baru.
+- **8 kategori toolbar**: `FILE`, `EDIT`, `TEKS`, `PARAGRAF`, `SISIPKAN`, `TATA LETAK`, `TAMPILAN`, `CORET` — semua tombol berfungsi.
+- Format karakter: **tebal, miring, garis bawah, coret, subscript, superscript**, warna teks, **stabilo**, ukuran font, H1/H2/Normal, reset format.
+- Format paragraf: rata kiri/tengah/kanan/justify, poin & nomor, **indent +/−**, spasi baris.
+- Edit: undo/redo, potong/salin/tempel paragraf, duplikat, hapus paragraf.
+- Sisipkan: tabel, gambar galeri, tanggal; tata letak: ukuran kertas, orientasi, margin.
+- Tampilan: zoom, cari teks, statistik kata, lompat paragraf atas/bawah.
+- Export/import **.docx** (Apache POI), cetak, bagikan; anotasi tinta bebas di halaman.
 
-### 📊 Excel (Spreadsheet .xlsx)
-- Grid native dengan **pinch-to-zoom, pan, seleksi sel, freeze pane**
-- Format sel: warna, border, alignment, number format (IDR, USD, %, Tanggal)
-- **Rumus**: `=SUM(A1:A5)`, `=AVERAGE()`, `=MAX()`, `=MIN()`, `=COUNT()`, aritmatika `=A1+B2*2`
-- Grafik (Bar/Pie), Filter, Merge cell
-- Export/Import **.xlsx** via Apache POI
+### 📊 Excel (Spreadsheet .xlsx) — 42 tool
+- **Keyboard-first**: ketuk sel → ketik di **formula bar** → tombol ✓ / `Done` menerapkan.
+- **8 kategori toolbar**: `BERKAS`, `EDIT`, `FONT`, `RATA`, `ANGKA`, `SEL`, `DATA`, `TAMPILAN`.
+- Format sel: tebal/miring/garis bawah, warna teks, warna isi, ukuran font, rata + lipat teks, border, reset format.
+- Angka: **Rupiah, Dollar, persen, angka, desimal +/−** (tampilan langsung berubah).
+- Sel: **sisip/hapus baris & kolom**, border, hapus isi.
+- Data: **SUM, AVERAGE** otomatis dari data di atas, **sort naik/turun**, filter, grafik batang.
+- Rumus Excel (`=SUM`, `=AVERAGE`, `=MAX`, `=MIN`, `=COUNT`, aritmatika) + rekalkulasi otomatis.
+- Undo/redo, potong/salin/tempel, zoom, toggle gridline, export/import **.xlsx**, cetak, bagikan.
 
-### 📽 PowerPoint (Presentasi .pptx)
-- Slide 16:9 dengan **drag & drop** elemen
-- Elemen: TextBox, Gambar, Shape (Rect/Oval/Triangle/Diamond), Tabel, Chart (Bar/Pie)
-- Tema: Modern, Dark, Warm, Nature, Retro
-- Transisi slide, slideshow mode, duplicate/delete slide
-- Export **.pptx** (OOXML native writer), Import .pptx
+### 📽 PowerPoint (Presentasi .pptx) — 34 tool
+- **5 kategori toolbar**: `BERKAS`, `SLIDE`, `SISIPKAN`, `FORMAT`, `CORET`.
+- Teks diedit lewat **dialog keyboard** (ketuk text box), mendukung tebal/miring/garis bawah, ukuran, warna, rata.
+- Sisipkan: teks, shape (7 bentuk), tabel (baris×kolom), grafik, gambar galeri.
+- Elemen: geser dengan sentuhan, **ke depan / ke belakang**, duplikat, hapus.
+- Slide: baru, duplikat, hapus, **naik/turun urutan**, tema, transisi, catatan slide, slideshow.
+- Export **.pptx** (WYSIWYG, termasuk tinta), cetak, bagikan.
 
-### ✏️ Dua Mode Stylus Huawei M-Pencil Pro
+### ⌨️ Input Teks & Stylus
 
-| Mode | Deskripsi | Teknologi |
-|------|-----------|-----------|
-| **Tulisan → Teks** | Tulis tangan dengan stylus, otomatis konversi jadi teks ketik setelah jeda 800ms | Google ML Kit Digital Ink + Huawei ML Handwriting fallback, support ID & EN |
-| **Tulisan Bebas** | Coretan/gambar tetap sebagai vector ink (tidak dikonversi). Untuk anotasi & tanda tangan | Canvas + Pressure sensitivity (4096 level), Tilt, Palm Rejection, Hover preview |
+| Mode | Deskripsi |
+|------|-----------|
+| **Keyboard (default)** | Semua input teks lewat keyboard sistem. Word: bar input per paragraf. Excel: formula bar. PowerPoint: dialog edit teks. Tidak ada lagi konversi tulisan tangan. |
+| **Gambar / Ink** | M-Pencil atau jari untuk coretan bebas & anotasi di atas dokumen/slide (Word & PowerPoint). Bisa undo/erase/clear. |
 
-**Fitur Stylus Khusus MatePad Mini:**
-- Palm Rejection (abaikan sentuhan jari saat stylus aktif, 500ms window)
-- Pressure sensitivity (ketebalan garis sesuai tekanan)
-- Hover preview (lingkaran + crosshair saat pena melayang)
-- Double-tap untuk ganti mode (Huawei Pencil SDK)
-- Eraser (penghapus fisik stylus), Highlighter (transparan), Pencil (blur)
+**Dukungan stylus MatePad Mini:**
+- Pressure sensitivity (ketebalan garis mengikuti tekanan)
+- Palm rejection saat stylus aktif
+- Hover preview pena
+- Eraser fisik stylus pada mode gambar
 
 ### 🖨 Cetak (Print)
 - **Android Print Framework** (Mopria) kompatibel semua printer WiFi/USB: Huawei, HP, Canon, Epson
@@ -61,7 +68,7 @@
 
 - **Layar 8.8" OLED 165Hz** — rendering 165Hz, shadow & animasi halus
 - **M-Pencil Pro Gen-3** — 4096 pressure, tilt ±60°, hover 15mm
-- **HarmonyOS/Android** — ML Kit Digital Ink (HMS fallback via reflection)
+- **HarmonyOS/Android** — input keyboard + kanvas tinta native
 - **Multi-window & Freeform** — `supportsScreens` xlarge, `requestLegacyExternalStorage`
 - **File Provider** — berbagi .docx/.xlsx/.pptx via `FileProvider`
 
@@ -75,7 +82,7 @@ RetroBit-Office/
 │   ├── src/main/
 │   │   ├── AndroidManifest.xml          # Permissions, activities, FileProvider
 │   │   ├── java/com/retrobit/office/
-│   │   │   ├── RetroBitApplication.kt   # Preload ML Kit models
+│   │   │   ├── RetroBitApplication.kt   # Application (keyboard-first)
 │   │   │   ├── core/stylus/
 │   │   │   │   ├── StylusState.kt       # InputMode, StylusConfig, InkStroke
 │   │   │   │   ├── StylusInputView.kt   # Base: palm rejection, pressure, hover
@@ -88,7 +95,7 @@ RetroBit-Office/
 │   │   │   │   ├── DocxImporter.kt      # Import .docx
 │   │   │   │   ├── WordEditorView.kt    # Page layout + StaticLayout + cursor
 │   │   │   │   ├── WordToolbar.kt       # 6 tab ribbon, ikon pixel-art, aksi lengkap
-│   │   │   │   └── WordEditorActivity.kt # Main: mode toggle, handwriting, save/print/share
+│   │   │   │   └── WordEditorActivity.kt # Main: keyboard editor, format, save/print/share
 │   │   │   ├── excel/
 │   │   │   │   ├── SpreadsheetModel.kt  # Sheet, Cell, FormulaEngine (SUM/AVERAGE/etc)
 │   │   │   │   ├── SpreadsheetView.kt   # Grid, pinch-zoom, pan, selection
@@ -163,20 +170,19 @@ implementation("org.apache.poi:poi-ooxml:5.2.5")
 
 > **Catatan teknis:** Export .pptx memakai OOXML writer manual (tanpa XSLF) agar bebas
 > dependensi `java.awt` yang tidak ada di Android. .docx/.xlsx via Apache POI XSSF/XWPF.
-> Handwriting engine: Google ML Kit Digital Ink (fallback HMS via reflection).
+> Input teks memakai keyboard sistem; kanvas tinta memakai `FreeDrawView` native (tanpa ML Kit saat start).
 
 ---
 
-## 🖊 Cara Pakai Stylus
+## 🖊 Cara Pakai
 
-1. **Aktifkan Mode** — Pilih `✍️ Tulisan → Teks` atau `🎨 Tulisan Bebas` di toolbar atas (RadioGroup)
-2. **Tulis** — Gunakan M-Pencil di area editor (Word) / overlay (Excel/PPT)
-3. **Konversi** — Pada mode Tulisan→Teks, diam 800ms atau tap `→ Teks` untuk paksa konversi. Hasil muncul di dokumen + candidate bar (4 opsi)
-4. **Warna/Ketebalan** — Pilih warna di palette, atur stroke width via SeekBar
-5. **Hapus** — Tombol Eraser / Undo / Clear
-6. **Cetak** — Tombol 🖨 di toolbar → pilih printer Mopria
-
----
+1. **Buka dokumen** — pilih Word / Excel / PowerPoint di layar utama.
+2. **Pilih tool** — ketuk kategori di rail kiri (mis. `TEKS`), lalu ketuk ikon berlabel di panel.
+3. **Word** — ketuk paragraf → keyboard terbuka → ketik di bar bawah. Tombol `+` = paragraf baru.
+4. **Excel** — ketuk sel → ketik nilai/rumus di formula bar → tekan ✓. Format lewat kategori `ANGKA`/`FONT`.
+5. **PowerPoint** — ketuk text box untuk edit lewat keyboard; tombol `SISIPKAN` untuk tabel/grafik/gambar.
+6. **Stylus** — pilih `GAMBAR` lalu coret di kanvas; `CORET` menyediakan pena/penghapus/undo/bersihkan.
+7. **Simpan & cetak** — FAB simpan, ikon printer, atau menu bagikan.
 
 ## 🧪 Testing di MatePad Mini
 

@@ -191,12 +191,14 @@ class PptxExporter(private val context: Context) {
             is SlideElement.TextBox -> {
                 val sz = (el.fontSize * 100).toInt()
                 val b = if (el.bold) "1" else "0"
+                val i = if (el.italic) " i=\"1\"" else ""
+                val u = if (el.underline) " u=\"sng\"" else ""
                 val algn = when (el.alignment) { 1 -> "ctr"; 2 -> "r"; else -> "l" }
                 val para = el.text.split("\n").joinToString("") { line ->
                     val bu = if (el.bullet) "<a:buFont typeface=\"Arial\"/><a:buChar char=\"&#8226;\"/>" else "<a:buNone/>"
                     val marL = if (el.bullet) " marL=\"285750\" indent=\"-285750\"" else ""
                     "<a:p><a:pPr algn=\"$algn\"$marL>$bu</a:pPr>" +
-                        "<a:r><a:rPr lang=\"id-ID\" sz=\"$sz\" b=\"$b\" dirty=\"0\">" +
+                        "<a:r><a:rPr lang=\"id-ID\" sz=\"$sz\" b=\"$b\"$i$u dirty=\"0\">" +
                         "<a:solidFill><a:srgbClr val=\"${hex(el.fontColor)}\"/></a:solidFill></a:rPr>" +
                         "<a:t>${esc(line)}</a:t></a:r></a:p>"
                 }

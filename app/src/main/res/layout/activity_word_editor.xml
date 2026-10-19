@@ -28,80 +28,11 @@
                 android:id="@+id/toolbar"
                 style="@style/Widget.App.Toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="42dp"
                 android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
                 app:title="WORD"
                 app:titleTextColor="@color/invert_ink"
                 app:titleTextAppearance="@style/TextAppearance.App.Title" />
-
-            <!-- Strip alat tulis -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@color/panel"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp">
-
-                <ImageButton
-                    android:id="@+id/btnLanguage"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_pi_book_open"
-                    android:background="@drawable/bg_circle"
-                    android:padding="6dp"
-                    app:tint="@color/ink_900"
-                    android:tooltipText="Bahasa tulisan tangan"
-                    android:contentDescription="Bahasa tulisan tangan" />
-
-                <ImageButton
-                    android:id="@+id/btnConvertNow"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="6dp"
-                    android:src="@drawable/ic_pi_check"
-                    android:background="@drawable/bg_circle"
-                    android:padding="6dp"
-                    app:tint="@color/ink_900"
-                    android:tooltipText="Konversi tulisan ke teks"
-                    android:contentDescription="Konversi tulisan ke teks" />
-
-                <ImageButton
-                    android:id="@+id/btnClearInk"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="6dp"
-                    android:src="@drawable/ic_pi_trash"
-                    android:background="@drawable/bg_circle"
-                    android:padding="6dp"
-                    app:tint="@color/ink_900"
-                    android:tooltipText="Hapus tinta"
-                    android:contentDescription="Hapus tinta" />
-
-                <SeekBar
-                    android:id="@+id/seekStrokeWidth"
-                    android:layout_width="64dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:max="20"
-                    android:progress="6"
-                    android:progressTint="@color/ink_900"
-                    android:thumbTint="@color/ink_900" />
-
-                <HorizontalScrollView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/colorPalette"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" />
-                </HorizontalScrollView>
-            </LinearLayout>
 
             <!-- Strip mode -->
             <LinearLayout
@@ -111,50 +42,58 @@
                 android:gravity="center_vertical"
                 android:background="@color/surface"
                 android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp">
+                android:paddingVertical="3dp">
 
                 <RadioGroup
                     android:id="@+id/modeToggle"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26dp"
                     android:orientation="horizontal"
                     android:background="@drawable/bg_segmented"
                     android:padding="2dp">
 
                     <RadioButton
-                        android:id="@+id/modeHandwriting"
-                        android:layout_width="0dp"
+                        android:id="@+id/modeText"
+                        android:layout_width="72dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:button="@null"
                         android:background="@drawable/bg_segment_item"
                         android:gravity="center"
-                        android:text="Tulis→Teks"
-                        android:textSize="9sp"
+                        android:text="KEYBOARD"
+                        android:textSize="8sp"
                         android:fontFamily="monospace"
                         android:textColor="@color/seg_tint"
                         android:checked="true" />
 
                     <RadioButton
                         android:id="@+id/modeFreeDraw"
-                        android:layout_width="0dp"
+                        android:layout_width="72dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:button="@null"
                         android:background="@drawable/bg_segment_item"
                         android:gravity="center"
-                        android:text="Gambar"
-                        android:textSize="9sp"
+                        android:text="GAMBAR"
+                        android:textSize="8sp"
                         android:fontFamily="monospace"
                         android:textColor="@color/seg_tint" />
                 </RadioGroup>
 
+                <TextView
+                    android:id="@+id/modeHint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="monospace"
+                    android:text="KETUK PARAGRAF → KETIK DI KEYBOARD"
+                    android:textColor="@color/ink_400"
+                    android:textSize="8sp"
+                    android:maxLines="1" />
+
                 <ImageButton
                     android:id="@+id/btnPrint"
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:layout_marginStart="6dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_pi_printer"
                     app:tint="@color/ink_900"
@@ -163,58 +102,95 @@
 
             <!-- Dokumen -->
             <androidx.core.widget.NestedScrollView
+                android:id="@+id/docScroll"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:fillViewport="true"
-                android:clipToPadding="false"
-                android:paddingBottom="70dp">
+                android:clipToPadding="false">
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="760dp">
+                    android:minHeight="360dp">
 
                     <com.retrobit.office.word.WordEditorView
                         android:id="@+id/wordEditorView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:background="@color/bg" />
-
-                    <com.retrobit.office.core.stylus.HandwritingView
-                        android:id="@+id/handwritingView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#141B1B18" />
 
                     <com.retrobit.office.core.stylus.FreeDrawView
                         android:id="@+id/freeDrawView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:visibility="gone" />
-
-                    <LinearLayout
-                        android:id="@+id/candidateBar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="@color/surface"
-                        android:padding="8dp"
-                        android:visibility="gone"
-                        android:layout_gravity="bottom" />
                 </FrameLayout>
             </androidx.core.widget.NestedScrollView>
+
+            <!-- Bar keyboard: selalu siap, tanpa mode tulisan tangan -->
+            <LinearLayout
+                android:id="@+id/inputBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@color/panel"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="5dp">
+
+                <EditText
+                    android:id="@+id/etInput"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_chip"
+                    android:fontFamily="monospace"
+                    android:gravity="center_vertical"
+                    android:hint="Ketik teks paragraf…"
+                    android:imeOptions="actionDone"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1"
+                    android:paddingHorizontal="10dp"
+                    android:textColor="@color/ink_900"
+                    android:textColorHint="@color/ink_400"
+                    android:textSize="12sp" />
+
+                <ImageButton
+                    android:id="@+id/btnNewParagraph"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_tool_square"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_pi_plus"
+                    android:contentDescription="Paragraf baru"
+                    android:tooltipText="Paragraf baru"
+                    app:tint="@color/ink_900" />
+
+                <ImageButton
+                    android:id="@+id/btnKeyboard"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_tool_square"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_pi_keyboard"
+                    android:contentDescription="Buka keyboard"
+                    android:tooltipText="Buka keyboard"
+                    app:tint="@color/ink_900" />
+            </LinearLayout>
 
             <!-- Status strip -->
             <TextView
                 android:id="@+id/stylusStatus"
                 android:layout_width="match_parent"
-                android:layout_height="22dp"
+                android:layout_height="20dp"
                 android:background="@color/ink_900"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="10dp"
-                android:text="MODE: TULIS→TEKS | M-PENCIL READY"
-                android:textSize="9sp"
+                android:text="MODE: KEYBOARD | KETUK PARAGRAF UNTUK MENGEDIT"
+                android:textSize="8sp"
                 android:fontFamily="monospace"
                 android:letterSpacing="0.08"
                 android:textColor="@color/invert_ink" />

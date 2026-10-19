@@ -1,5 +1,7 @@
 package com.retrobit.office.excel
 
+import android.text.Layout
+import android.text.StaticLayout
 import android.text.TextUtils
 
 import android.content.Context
@@ -32,6 +34,7 @@ class SpreadsheetView @JvmOverloads constructor(
     var onCellSelected: ((Int, Int, Cell) -> Unit)? = null
     var onCellEdited: ((Int, Int, String) -> Unit)? = null
 
+    var showGridlines = true
     private var selectedRow = 0
     private var selectedCol = 0
     private var editingRow = -1
@@ -48,6 +51,7 @@ class SpreadsheetView @JvmOverloads constructor(
 
     // Paints
     private val gridPaint = Paint().apply { color = Color.parseColor("#E0E0E0"); strokeWidth = 1f }
+    private val borderPaint = Paint().apply { color = Color.parseColor("#1B1B18"); strokeWidth = 2f }
     private val headerPaint = Paint().apply { color = Color.parseColor("#F1F3F4") }
     private val headerTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3C4043"); textSize = 12f * resources.displayMetrics.density; textAlign = Paint.Align.CENTER; typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL) }
     private val cellTextPaint = android.text.TextPaint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; textSize = 13f * resources.displayMetrics.density }
@@ -136,6 +140,30 @@ class SpreadsheetView @JvmOverloads constructor(
         invalidate()
     }
 
+    fun getSelectedRow(): Int = selectedRow
+    fun getSelectedCol(): Int = selectedCol
+
+    fun selectCell(row: Int, col: Int) {
+        selectedRow = row.coerceIn(0, model.rows.size - 1)
+        selectedCol = col.coerceIn(0, model.cols.size - 1)
+        onCellSelected?.invoke(selectedRow, selectedCol, model.getCell(selectedRow, selectedCol))
+        invalidate()
+    }
+
+    fun refresh() {
+        model.recalculate()
+        invalidate()
+    }
+
+    fun setZoom(z: Float) {
+        scale = z.coerceIn(0.5f, 3f)
+        cellWidth = 120f * scale
+        cellHeight = 44f * scale
+        invalidate()
+    }
+
+    fun getZoom(): Float = scale
+
     fun applyStyleToSelection(styleTransform: (CellStyle) -> CellStyle) {
         val cell = model.getCell(selectedRow, selectedCol)
         cell.style = styleTransform(cell.style)
@@ -194,7 +222,7 @@ class SpreadsheetView @JvmOverloads constructor(
                 }
 
                 // Text
-                val display = cell.displayValue.ifEmpty { cell.value }
+                val display = cell.formattedValue()
                 if (display.isNotEmpty()) {
                     cellTextPaint.color = cell.style.fontColor
                     cellTextPaint.typeface = when {
@@ -217,20 +245,44 @@ class SpreadsheetView @JvmOverloads constructor(
                         CellAlignment.RIGHT -> Paint.Align.RIGHT
                         else -> Paint.Align.LEFT
                     }
-                    // Ellipsize if overflow
-                    val maxW = cellWidth - 16f
-                    val ellipsized = if (cellTextPaint.measureText(display) > maxW) {
-                        TextUtils.ellipsize(display, cellTextPaint, maxW, TextUtils.TruncateAt.END).toString()
-                    } else display
-                    canvas.drawText(ellipsized, textX, y + cellHeight / 2 + 6f * scale, cellTextPaint)
+                    if (cell.style.wrapText) {
+                        val widthPx = (cellWidth - 12f).toInt().coerceAtLeast(20)
+                        val sl = StaticLayout.Builder
+                            .obtain(display, 0, display.length, cellTextPaint, widthPx)
+                            .setAlignment(when (align) {
+                                CellAlignment.CENTER -> Layout.Alignment.ALIGN_CENTER
+                                CellAlignment.RIGHT -> Layout.Alignment.ALIGN_OPPOSITE
+                                else -> Layout.Alignment.ALIGN_NORMAL
+                            })
+                            .setMaxLines(3)
+                            .setEllipsize(TextUtils.TruncateAt.END)
+                            .build()
+                        canvas.save()
+                        canvas.clipRect(x + 4f, y + 2f, x + cellWidth - 4f, y + cellHeight - 2f)
+                        canvas.translate(x + 6f, y + 4f)
+                        sl.draw(canvas)
+                        canvas.restore()
+                    } else {
+                        // Ellipsize if overflow
+                        val maxW = cellWidth - 16f
+                        val ellipsized = if (cellTextPaint.measureText(display) > maxW) {
+                            TextUtils.ellipsize(display, cellTextPaint, maxW, TextUtils.TruncateAt.END).toString()
+                        } else display
+                        canvas.drawText(ellipsized, textX, y + cellHeight / 2 + 6f * scale, cellTextPaint)
+                    }
                 }
 
-                // Borders
-                if (cell.style.border.top || true) canvas.drawLine(x, y, x + cellWidth, y, gridPaint)
-                if (cell.style.border.left || true) canvas.drawLine(x, y, x, y + cellHeight, gridPaint)
-                // Right/bottom always for grid
-                canvas.drawLine(x + cellWidth, y, x + cellWidth, y + cellHeight, gridPaint)
-                canvas.drawLine(x, y + cellHeight, x + cellWidth, y + cellHeight, gridPaint)
+                // Grid / borders
+                if (showGridlines) {
+                    canvas.drawLine(x, y, x + cellWidth, y, gridPaint)
+                    canvas.drawLine(x, y, x, y + cellHeight, gridPaint)
+                    canvas.drawLine(x + cellWidth, y, x + cellWidth, y + cellHeight, gridPaint)
+                    canvas.drawLine(x, y + cellHeight, x + cellWidth, y + cellHeight, gridPaint)
+                }
+                if (cell.style.border.top) canvas.drawLine(x, y, x + cellWidth, y, borderPaint)
+                if (cell.style.border.bottom) canvas.drawLine(x, y + cellHeight, x + cellWidth, y + cellHeight, borderPaint)
+                if (cell.style.border.left) canvas.drawLine(x, y, x, y + cellHeight, borderPaint)
+                if (cell.style.border.right) canvas.drawLine(x + cellWidth, y, x + cellWidth, y + cellHeight, borderPaint)
 
                 // Formula indicator (small green triangle)
                 if (cell.isFormula) {

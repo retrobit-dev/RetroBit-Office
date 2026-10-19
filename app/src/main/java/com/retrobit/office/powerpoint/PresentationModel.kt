@@ -20,7 +20,14 @@ data class Presentation(
     }
     fun duplicateSlide(index: Int) {
         if (index in slides.indices) {
-            val copy = slides[index].copy(index = slides.size, id = java.util.UUID.randomUUID().toString())
+            val src = slides[index]
+            val copy = src.copy(
+                index = slides.size,
+                id = java.util.UUID.randomUUID().toString(),
+                background = src.background.copy(),
+                elements = src.elements.map { it.duplicateElement() }.toMutableList(),
+                inkStrokes = src.inkStrokes.toMutableList()
+            )
             slides.add(index + 1, copy)
         }
     }
@@ -87,6 +94,8 @@ sealed class SlideElement {
         var fontSize: Float = if (isTitle) 28f else 16f,
         var fontColor: Int = Color.BLACK,
         var bold: Boolean = isTitle,
+        var italic: Boolean = false,
+        var underline: Boolean = false,
         var alignment: Int = 0, // 0 left, 1 center, 2 right
         var bullet: Boolean = false
     ) : SlideElement()
@@ -138,3 +147,12 @@ sealed class SlideElement {
 
 enum class ShapeType { RECTANGLE, OVAL, TRIANGLE, DIAMOND, ARROW, STAR, PENTAGON }
 enum class ChartType { BAR, PIE, LINE, COLUMN }
+
+/** Salinan dalam elemen slide (agar duplikat tidak berbagi referensi). */
+fun SlideElement.duplicateElement(): SlideElement = when (this) {
+    is SlideElement.TextBox -> copy()
+    is SlideElement.Image -> copy()
+    is SlideElement.Shape -> copy()
+    is SlideElement.Table -> copy(data = data.map { it.toList() })
+    is SlideElement.Chart -> copy(data = data.toList(), labels = labels.toList())
+}

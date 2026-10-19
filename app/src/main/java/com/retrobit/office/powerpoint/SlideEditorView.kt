@@ -24,9 +24,11 @@ class SlideEditorView @JvmOverloads constructor(
     var onTextEditRequested: ((SlideElement.TextBox) -> Unit)? = null
 
     private var selectedElement: SlideElement? = null
+    private val imageCache = HashMap<String, Bitmap>()
     private var dragStartX = 0f
     private var dragStartY = 0f
     private var isDragging = false
+    private var dragMoved = false
 
     private val bgPaint = Paint()
     private val textPaint = android.text.TextPaint(Paint.ANTI_ALIAS_FLAG)
@@ -58,6 +60,13 @@ class SlideEditorView @JvmOverloads constructor(
         // Background color/gradient
         bgPaint.color = slide.background.color
         canvas.drawRoundRect(slideRect, 16f, 16f, bgPaint)
+        slide.background.imagePath?.let { path ->
+            val bmp = loadBitmap(path)
+            if (bmp != null) {
+                val src = Rect(0, 0, bmp.width, bmp.height)
+                canvas.drawBitmap(bmp, src, slideRect, null)
+            }
+        }
 
         // Theme accent bar at top
         val accentPaint = Paint().apply { color = Color.parseColor("#1A73E8") }
@@ -95,7 +104,13 @@ class SlideEditorView @JvmOverloads constructor(
                 // Text box - draw text with wrapping
                 textPaint.color = el.fontColor
                 textPaint.textSize = el.fontSize * resources.displayMetrics.density * 0.45f
-                textPaint.typeface = if (el.bold) Typeface.create(Typeface.DEFAULT, Typeface.BOLD) else Typeface.DEFAULT
+                textPaint.typeface = when {
+                    el.bold && el.italic -> Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC)
+                    el.bold -> Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                    el.italic -> Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+                    else -> Typeface.DEFAULT
+                }
+                textPaint.isUnderlineText = el.underline
                 textPaint.textAlign = when (el.alignment) {
                     1 -> Paint.Align.CENTER
                     2 -> Paint.Align.RIGHT
@@ -171,6 +186,12 @@ class SlideEditorView @JvmOverloads constructor(
                 if (el.strokeWidth > 0) canvas.drawRoundRect(rect, 16f, 16f, strokePaint)
             }
             is SlideElement.Image -> {
+                val bmp = loadBitmap(el.path)
+                if (bmp != null) {
+                    val src = Rect(0, 0, bmp.width, bmp.height)
+                    canvas.drawBitmap(bmp, src, rect, null)
+                    return
+                }
                 val imgPaint = Paint().apply { color = Color.parseColor("#E0E0E0") }
                 canvas.drawRoundRect(rect, 12f, 12f, imgPaint)
                 val iconPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.GRAY; textSize = 40f; textAlign = Paint.Align.CENTER }
@@ -262,6 +283,7 @@ class SlideEditorView @JvmOverloads constructor(
                     dragStartX = event.x
                     dragStartY = event.y
                     isDragging = true
+                    dragMoved = false
                 } else {
                     selectedElement = null
                     onElementSelected?.invoke(null)
@@ -273,6 +295,8 @@ class SlideEditorView @JvmOverloads constructor(
                 if (isDragging && selectedElement != null) {
                     val dx = (event.x - dragStartX) / slideRect.width()
                     val dy = (event.y - dragStartY) / slideRect.height()
+                    if (kotlin.math.abs(event.x - dragStartX) > 4f ||
+                        kotlin.math.abs(event.y - dragStartY) > 4f) dragMoved = true
                     selectedElement!!.x += dx
                     selectedElement!!.y += dy
                     // Clamp 0..1
@@ -285,11 +309,12 @@ class SlideEditorView @JvmOverloads constructor(
                 }
             }
             MotionEvent.ACTION_UP -> {
-                if (isDragging && event.eventTime - event.downTime < 200) {
-                    // Tap: if text box, request edit
+                if (isDragging && !dragMoved) {
+                    // Tap: if text box, request edit lewat keyboard
                     (selectedElement as? SlideElement.TextBox)?.let { onTextEditRequested?.invoke(it) }
                 }
                 isDragging = false
+                dragMoved = false
                 return true
             }
         }
@@ -304,6 +329,86 @@ class SlideEditorView @JvmOverloads constructor(
     fun addShape(type: ShapeType) {
         slide.elements.add(SlideElement.Shape(type = type))
         invalidate()
+    }
+
+    fun getSelectedElement(): SlideElement? = selectedElement
+
+    fun selectElement(el: SlideElement?) {
+        selectedElement = el
+        invalidate()
+        onElementSelected?.invoke(el)
+    }
+
+    fun removeSelected(): Boolean {
+        val el = selectedElement ?: return false
+        slide.elements.remove(el)
+        selectedElement = null
+        invalidate()
+        onElementSelected?.invoke(null)
+        return true
+    }
+
+    fun duplicateSelected(): Boolean {
+        val el = selectedElement ?: return false
+        val copy = when (el) {
+            is SlideElement.TextBox -> el.copy(x = (el.x + 0.03f).coerceAtMost(1f - el.width))
+            is SlideElement.Image -> el.copy(x = (el.x + 0.03f).coerceAtMost(1f - el.width))
+            is SlideElement.Shape -> el.copy(x = (el.x + 0.03f).coerceAtMost(1f - el.width))
+            is SlideElement.Table -> el.copy(x = (el.x + 0.03f).coerceAtMost(1f - el.width))
+            is SlideElement.Chart -> el.copy(x = (el.x + 0.03f).coerceAtMost(1f - el.width))
+        }
+        slide.elements.add(copy)
+        selectedElement = copy
+        invalidate()
+        onElementSelected?.invoke(copy)
+        return true
+    }
+
+    fun bringToFront(): Boolean {
+        val el = selectedElement ?: return false
+        slide.elements.remove(el)
+        slide.elements.add(el)
+        invalidate()
+        return true
+    }
+
+    fun sendToBack(): Boolean {
+        val el = selectedElement ?: return false
+        slide.elements.remove(el)
+        slide.elements.add(0, el)
+        invalidate()
+        return true
+    }
+
+    fun applyToSelectedText(transform: (SlideElement.TextBox) -> Unit): Boolean {
+        val tb = selectedElement as? SlideElement.TextBox ?: return false
+        transform(tb)
+        invalidate()
+        return true
+    }
+
+    fun insertImage(path: String) {
+        slide.elements.add(SlideElement.Image(path = path, x = 0.15f, y = 0.25f, width = 0.7f, height = 0.45f))
+        invalidate()
+    }
+
+    fun notifyChanged() = invalidate()
+
+    private fun loadBitmap(path: String): Bitmap? {
+        if (path.isBlank()) return null
+        imageCache[path]?.let { return it }
+        return try {
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeFile(path, bounds)
+            var sample = 1
+            while (bounds.outWidth / sample > 2048 || bounds.outHeight / sample > 2048) sample *= 2
+            val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+            val bmp = BitmapFactory.decodeFile(path, opts)
+            if (bmp != null) imageCache[path] = bmp
+            bmp
+        } catch (_: Exception) {
+            null
+        }
     }
 
     fun getBitmap(): Bitmap {

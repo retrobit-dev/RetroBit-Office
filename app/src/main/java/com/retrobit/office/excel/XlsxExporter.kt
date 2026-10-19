@@ -31,11 +31,8 @@ class XlsxExporter {
                         cell.cellFormula = cellModel.formula!!.removePrefix("=")
                     } else {
                         val numeric = cellModel.value.toDoubleOrNull()
-                        if (numeric != null && cellModel.style.numberFormat != NumberFormat.GENERAL) {
-                            cell.setCellValue(numeric)
-                        } else {
-                            cell.setCellValue(cellModel.value)
-                        }
+                        if (numeric != null) cell.setCellValue(numeric)
+                        else cell.setCellValue(cellModel.value)
                     }
 
                     // Style
@@ -90,11 +87,15 @@ class XlsxExporter {
                     if (cellModel.style.border.left) poiStyle.borderLeft = org.apache.poi.ss.usermodel.BorderStyle.THIN
                     if (cellModel.style.border.right) poiStyle.borderRight = org.apache.poi.ss.usermodel.BorderStyle.THIN
 
-                    // Number format
+                    // Number format (mengikuti jumlah desimal sel)
+                    val dec = cellModel.style.decimals.coerceIn(0, 6)
+                    val zeros = if (dec > 0) "." + "0".repeat(dec) else ""
                     val fmt = when (cellModel.style.numberFormat) {
-                        NumberFormat.CURRENCY_IDR -> "\"Rp\"#,##0"
-                        NumberFormat.CURRENCY_USD -> "\"$\"#,##0.00"
-                        NumberFormat.PERCENT -> "0.00%"
+                        NumberFormat.CURRENCY_IDR -> "\"Rp\"#,##0$zeros"
+                        NumberFormat.CURRENCY_USD -> "\"$\"#,##0$zeros"
+                        NumberFormat.PERCENT -> "0$zeros%"
+                        NumberFormat.NUMBER -> "#,##0$zeros"
+                        NumberFormat.ACCOUNTING -> "#,##0$zeros"
                         NumberFormat.DATE -> "yyyy-mm-dd"
                         else -> null
                     }

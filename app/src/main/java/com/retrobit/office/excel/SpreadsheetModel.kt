@@ -29,14 +29,82 @@ data class Sheet(
         return rows[row].cells[col]
     }
 
-    fun setCell(row: Int, col: Int, value: String, style: CellStyle = CellStyle()) {
+    fun setCell(row: Int, col: Int, value: String, style: CellStyle? = null) {
         ensureSize(row, col)
         rows[row].cells[col].apply {
             this.value = value
             this.displayValue = value
-            this.style = style
+            this.formula = null
+            if (style != null) this.style = style
         }
     }
+
+    /** Hitung ulang seluruh formula setelah data berubah. */
+    fun recalculate() {
+        rows.forEach { r -> r.cells.forEach { c ->
+            c.formula?.let { c.displayValue = evaluateFormula(it) }
+        } }
+    }
+
+    fun insertRow(at: Int, addCells: Boolean = true) {
+        val idx = at.coerceIn(0, rows.size)
+        rows.add(idx, Row(idx))
+        if (addCells) rows[idx].cells = MutableList(cols.size.coerceAtLeast(20)) { Cell() }
+        reindex()
+    }
+
+    fun deleteRow(at: Int) {
+        if (rows.size <= 1 || at !in rows.indices) return
+        rows.removeAt(at)
+        reindex()
+    }
+
+    fun insertColumn(at: Int) {
+        val idx = at.coerceIn(0, cols.size)
+        rows.forEach { r ->
+            while (r.cells.size < cols.size) r.cells.add(Cell())
+            r.cells.add(idx, Cell())
+        }
+        cols.add(idx, Column(idx, widthDp = 96f))
+        reindex()
+    }
+
+    fun deleteColumn(at: Int) {
+        if (cols.size <= 1 || at !in cols.indices) return
+        cols.removeAt(at)
+        rows.forEach { r -> if (at < r.cells.size) r.cells.removeAt(at) }
+        reindex()
+    }
+
+    private fun reindex() {
+        rows.forEachIndexed { i, r -> r.index = i }
+        cols.forEachIndexed { i, c -> c.index = i }
+    }
+
+    /** Urutkan baris data (header baris 0 dipertahankan) berdasarkan kolom. */
+    fun sortByColumn(col: Int, ascending: Boolean) {
+        if (rows.size <= 1) return
+        val header = rows[0]
+        val data = rows.drop(1).sortedWith(compareBy<Row> { row ->
+            val raw = row.cells.getOrNull(col)?.let { it.displayValue.ifEmpty { it.value } } ?: ""
+            raw.replace(".", "").replace(",", ".").toDoubleOrNull()
+        }.thenBy { row ->
+            row.cells.getOrNull(col)?.let { it.displayValue.ifEmpty { it.value } }?.lowercase() ?: ""
+        })
+        val ordered = if (ascending) data else data.reversed()
+        rows = (listOf(header) + ordered).toMutableList()
+        reindex()
+        recalculate()
+    }
+
+    /** Salinan dalam (untuk undo/redo). */
+    fun deepCopy(): Sheet = copy(
+        rows = rows.map { r -> r.copy(cells = r.cells.map { c ->
+            c.copy(style = c.style.copy(border = c.style.border.copy()))
+        }.toMutableList()) }.toMutableList(),
+        cols = cols.map { it.copy() }.toMutableList(),
+        mergedCells = mergedCells.toMutableList()
+    )
 
     fun setFormula(row: Int, col: Int, formula: String) {
         ensureSize(row, col)
@@ -110,6 +178,7 @@ data class CellStyle(
     var alignment: CellAlignment = CellAlignment.LEFT,
     var verticalAlignment: VerticalAlignment = VerticalAlignment.CENTER,
     var numberFormat: NumberFormat = NumberFormat.GENERAL,
+    var decimals: Int = 0,
     var border: CellBorder = CellBorder(),
     var wrapText: Boolean = false
 )
@@ -241,5 +310,29 @@ object FormulaEngine {
                 return x
             }
         }.parse()
+    }
+}
+
+/** Angka gaya Indonesia: ribuan titik, desimal koma. */
+private fun idNumber(num: Double, decimals: Int): String {
+    val us = String.format(java.util.Locale.US, "%,.${decimals}f", num)
+    return us.replace(",", "\u0001").replace(".", ",").replace("\u0001", ".")
+}
+
+/** Tampilan angka sesuai format sel (Rp, %, desimal). */
+fun Cell.formattedValue(): String {
+    if (style.numberFormat == NumberFormat.GENERAL || value.isBlank()) {
+        return displayValue.ifEmpty { value }
+    }
+    val raw = value.replace("Rp", "").replace("%", "").trim()
+        .replace(".", "").replace(",", ".")
+    val num = raw.toDoubleOrNull() ?: return displayValue.ifEmpty { value }
+    val dec = style.decimals.coerceIn(0, 6)
+    return when (style.numberFormat) {
+        NumberFormat.CURRENCY_IDR -> "Rp " + idNumber(num, dec)
+        NumberFormat.CURRENCY_USD -> "$" + String.format(java.util.Locale.US, "%,.${dec}f", num)
+        NumberFormat.PERCENT -> String.format(java.util.Locale.US, "%.${dec}f", num * 100) + "%"
+        NumberFormat.NUMBER, NumberFormat.ACCOUNTING -> idNumber(num, dec)
+        else -> displayValue.ifEmpty { value }
     }
 }

@@ -32,6 +32,7 @@ class ToolSidebar @JvmOverloads constructor(
     private var panelTitle: TextView
     private var panelTools: LinearLayout
     private var panel: LinearLayout
+    private lateinit var rail: LinearLayout
     private val density = resources.displayMetrics.density
 
     private fun dp(v: Int): Int = (v * density).toInt()
@@ -41,11 +42,19 @@ class ToolSidebar @JvmOverloads constructor(
         setBackgroundColor(Color.TRANSPARENT)
 
         // ---- Rail ----
-        val rail = LinearLayout(context).apply {
+        rail = LinearLayout(context).apply {
             orientation = VERTICAL
             setBackgroundColor(context.getColor(R.color.panel))
         }
-        addView(rail, LayoutParams(dp(52), LayoutParams.MATCH_PARENT))
+        val railScroll = android.widget.ScrollView(context).apply {
+            isFillViewport = true
+            isVerticalScrollBarEnabled = false
+            addView(rail, android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
+            ))
+        }
+        addView(railScroll, LayoutParams(dp(56), LayoutParams.MATCH_PARENT))
 
         // Divider rail
         addView(divider(), LayoutParams(dp(1), LayoutParams.MATCH_PARENT))
@@ -56,7 +65,7 @@ class ToolSidebar @JvmOverloads constructor(
             setBackgroundColor(context.getColor(R.color.panel))
             visibility = GONE
         }
-        addView(panel, LayoutParams(dp(168), LayoutParams.MATCH_PARENT))
+        addView(panel, LayoutParams(dp(198), LayoutParams.MATCH_PARENT))
         addView(divider(), LayoutParams(dp(1), LayoutParams.MATCH_PARENT))
 
         // Header panel
@@ -86,11 +95,17 @@ class ToolSidebar @JvmOverloads constructor(
             orientation = VERTICAL
             setPadding(dp(6), dp(6), dp(6), dp(6))
         }
-        panel.addView(panelTools, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        val toolScroll = android.widget.ScrollView(context).apply {
+            isFillViewport = true
+            addView(panelTools, android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
+            ))
+        }
+        panel.addView(toolScroll, LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
 
         // ---- isi rail ----
         // (diisi oleh setCategories)
-        rail.tag = rail // anchor untuk setCategories
     }
 
     private fun divider() = View(context).apply {
@@ -99,7 +114,6 @@ class ToolSidebar @JvmOverloads constructor(
 
     fun setCategories(cats: List<ToolCategory>) {
         categories = cats
-        val rail = getChildAt(0) as LinearLayout
         rail.removeAllViews()
         railButtons.clear()
         cats.forEach { cat ->
@@ -107,7 +121,7 @@ class ToolSidebar @JvmOverloads constructor(
                 orientation = VERTICAL
                 gravity = Gravity.CENTER
                 setBackgroundResource(R.drawable.bg_rail_item)
-                setPadding(dp(4), dp(10), dp(4), dp(10))
+                setPadding(dp(2), dp(5), dp(2), dp(4))
                 tooltipText = cat.label
                 contentDescription = cat.label
                 setOnClickListener { onCategoryClick(cat.id) }
@@ -116,8 +130,17 @@ class ToolSidebar @JvmOverloads constructor(
                 setImageResource(cat.iconRes)
                 imageTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.ink_600))
             }
-            btn.addView(icon, LayoutParams(dp(22), dp(22)))
-            rail.addView(btn, LayoutParams(LayoutParams.MATCH_PARENT, dp(46)))
+            btn.addView(icon, LayoutParams(dp(21), dp(21)))
+            val cap = TextView(context).apply {
+                text = cat.label
+                setTextColor(context.getColor(R.color.ink_600))
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 6.5f)
+                gravity = Gravity.CENTER
+                maxLines = 1
+                letterSpacing = 0.02f
+            }
+            btn.addView(cap, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+            rail.addView(btn, LayoutParams(LayoutParams.MATCH_PARENT, dp(52)))
             railButtons[cat.id] = btn
         }
     }
@@ -140,6 +163,9 @@ class ToolSidebar @JvmOverloads constructor(
                 android.content.res.ColorStateList.valueOf(
                     context.getColor(if (sel) R.color.invert_ink else R.color.ink_600)
                 )
+            (btn.getChildAt(1) as? TextView)?.setTextColor(
+                context.getColor(if (sel) R.color.invert_ink else R.color.ink_600)
+            )
         }
         panelTitle.text = cat.label
         panelTools.removeAllViews()
@@ -151,7 +177,7 @@ class ToolSidebar @JvmOverloads constructor(
                 panelTools.addView(row, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
             }
             val btn = buildToolButton(cat.id, tool)
-            row!!.addView(btn, LayoutParams(0, dp(50), 1f).apply { setMargins(dp(3), dp(3), dp(3), dp(3)) })
+            row!!.addView(btn, LayoutParams(0, dp(58), 1f).apply { setMargins(dp(3), dp(3), dp(3), dp(3)) })
         }
         panel.visibility = VISIBLE
     }
@@ -163,6 +189,7 @@ class ToolSidebar @JvmOverloads constructor(
             btn.isSelected = false
             (btn.getChildAt(0) as ImageView).imageTintList =
                 android.content.res.ColorStateList.valueOf(context.getColor(R.color.ink_600))
+            (btn.getChildAt(1) as? TextView)?.setTextColor(context.getColor(R.color.ink_600))
         }
     }
 
@@ -175,13 +202,24 @@ class ToolSidebar @JvmOverloads constructor(
             setBackgroundResource(R.drawable.bg_tool_square)
             tooltipText = tool.label
             contentDescription = tool.label
+            setPadding(dp(1), dp(3), dp(1), dp(2))
             setOnClickListener { onToolSelected?.invoke(catId, tool.id) }
         }
         val icon = ImageView(context).apply {
             setImageResource(tool.iconRes)
             imageTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.ink_900))
         }
-        btn.addView(icon, LayoutParams(dp(22), dp(22)))
+        btn.addView(icon, LayoutParams(dp(21), dp(21)))
+        val cap = TextView(context).apply {
+            text = tool.label
+            setTextColor(context.getColor(R.color.ink_600))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 7f)
+            gravity = Gravity.CENTER
+            maxLines = 1
+            ellipsize = android.text.TextUtils.TruncateAt.END
+            setPadding(dp(1), dp(2), dp(1), 0)
+        }
+        btn.addView(cap, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         return btn
     }
 }

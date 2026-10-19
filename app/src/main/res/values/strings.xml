@@ -3,8 +3,8 @@
     <string name="word">Word</string>
     <string name="excel">Excel</string>
     <string name="powerpoint">PowerPoint</string>
-    <string name="mode_handwriting">Tulisan → Teks</string>
-    <string name="mode_freedraw">Tulisan Bebas</string>
+    <string name="mode_handwriting">Keyboard</string>
+    <string name="mode_freedraw">Gambar</string>
     <string name="save">Simpan</string>
     <string name="print">Cetak</string>
     <string name="share">Bagikan</string>

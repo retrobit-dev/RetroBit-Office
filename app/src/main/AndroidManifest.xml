@@ -68,12 +68,14 @@
             android:name=".excel.ExcelEditorActivity"
             android:exported="false"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:name=".powerpoint.PowerPointEditorActivity"
             android:exported="false"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.MainActivity" />
 
         <activity

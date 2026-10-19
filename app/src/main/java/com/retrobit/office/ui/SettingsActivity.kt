@@ -16,11 +16,11 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.title = "Pengaturan"
 
         findViewById<TextView>(R.id.appInfo)?.text = """
-            RetroBit Office v1.0.0
+            RetroBit Office v1.1.0
             • Huawei MatePad Mini Optimized
-            • Mendukung M-Pencil Pro (4096 pressure)
-            • Handwriting ke Teks (ML Kit: ID/EN)
-            • Tulisan Bebas (Free Ink)
+            • Input teks: keyboard (tanpa konversi tulisan tangan)
+            • M-Pencil Pro: gambar bebas / anotasi tinta
+            • Toolbar lengkap dengan label ikon
             • Output: .docx, .xlsx, .pptx
             • Cetak via Mopria / PDF
             • Dibuat dengan Kotlin + Apache POI

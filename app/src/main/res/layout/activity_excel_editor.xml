@@ -87,57 +87,16 @@
                 android:contentDescription="Terapkan" />
         </LinearLayout>
 
-        <!-- Strip mode -->
-        <RadioGroup
-            android:id="@+id/modeToggleExcel"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_segmented"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginBottom="4dp"
-            android:padding="2dp">
-
-            <RadioButton
-                android:id="@+id/modeTouch"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:background="@drawable/bg_segment_item"
-                android:gravity="center"
-                android:text="Sentuh"
-                android:textSize="9sp"
-                android:fontFamily="monospace"
-                android:textColor="@color/seg_tint"
-                android:checked="true" />
-
-            <RadioButton
-                android:id="@+id/modeStylusText"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:background="@drawable/bg_segment_item"
-                android:gravity="center"
-                android:text="Tulis→Teks"
-                android:textSize="9sp"
-                android:fontFamily="monospace"
-                android:textColor="@color/seg_tint" />
-
-            <RadioButton
-                android:id="@+id/modeStylusDraw"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:background="@drawable/bg_segment_item"
-                android:gravity="center"
-                android:text="Gambar"
-                android:textSize="9sp"
-                android:fontFamily="monospace"
-                android:textColor="@color/seg_tint" />
-        </RadioGroup>
+            android:layout_height="20dp"
+            android:background="@color/panel"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:text="KETUK SEL → KETIK DI FORMULA BAR / KEYBOARD"
+            android:textColor="@color/ink_400"
+            android:textSize="8sp" />
 
         <!-- Grid -->
         <FrameLayout
@@ -150,13 +109,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/surface" />
-
-            <com.retrobit.office.core.stylus.HandwritingView
-                android:id="@+id/handwritingOverlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="#141B1B18" />
         </FrameLayout>
     </LinearLayout>
 </LinearLayout>

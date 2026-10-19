@@ -234,6 +234,46 @@ class FreeDrawView @JvmOverloads constructor(
         invalidate()
     }
 
+    /** Daftar stroke tinta (vektor) — hemat memori untuk simpan per-slide. */
+    fun exportInkStrokes(): List<InkStroke> =
+        layers.filter { it.visible }.flatMap { it.strokes.toList() }
+
+    /** Pulihkan stroke tinta ke kanvas (mis. pindah slide). */
+    fun setInkStrokes(strokes: List<InkStroke>) {
+        layers.forEach { it.strokes.clear() }
+        layers[0].strokes.addAll(strokes)
+        undoStack.clear()
+        redrawAll()
+    }
+
+    /** Render stroke ke bitmap ukuran slide dengan crop area slide. */
+    fun renderInkBitmap(
+        strokes: List<InkStroke>,
+        outW: Int, outH: Int,
+        srcLeft: Int, srcTop: Int, srcW: Int, srcH: Int
+    ): Bitmap? {
+        if (strokes.isEmpty() || outW <= 0 || outH <= 0 || srcW <= 0 || srcH <= 0) return null
+        val bmp = Bitmap.createBitmap(outW, outH, Bitmap.Config.ARGB_8888)
+        val c = Canvas(bmp)
+        c.save()
+        c.scale(outW / srcW.toFloat(), outH / srcH.toFloat())
+        c.translate(-srcLeft.toFloat(), -srcTop.toFloat())
+        strokes.forEach { stroke ->
+            if (stroke.points.isEmpty()) return@forEach
+            val paint = createPaintForStroke(stroke)
+            if (stroke.points.size > 2 && stroke.config.pressureSensitive) {
+                drawPressureStroke(c, stroke, paint)
+            } else {
+                val path = Path()
+                path.moveTo(stroke.points[0].x, stroke.points[0].y)
+                for (i in 1 until stroke.points.size) path.lineTo(stroke.points[i].x, stroke.points[i].y)
+                c.drawPath(path, paint)
+            }
+        }
+        c.restore()
+        return bmp
+    }
+
     fun exportAsBitmap(): Bitmap {
         val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val c = Canvas(bmp)
