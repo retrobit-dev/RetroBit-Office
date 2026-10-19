@@ -546,6 +546,7 @@ class ExcelEditorActivity : AppCompatActivity() {
                 spreadsheetView.model = sheet
                 spreadsheetView.selectCell(0, 0)
                 refreshFormulaBar()
+                supportActionBar?.title = "Excel - RetroBit Office"
             }
             .setNegativeButton("Batal", null)
             .show()

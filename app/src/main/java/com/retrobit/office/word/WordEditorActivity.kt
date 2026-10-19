@@ -448,6 +448,7 @@ class WordEditorActivity : AppCompatActivity() {
                 editorView.setCursorToParagraph(1)
                 syncInputFromCursor()
                 currentFile = null
+                supportActionBar?.title = "Word - RetroBit Office"
             }
             .setNegativeButton("Batal", null)
             .show()

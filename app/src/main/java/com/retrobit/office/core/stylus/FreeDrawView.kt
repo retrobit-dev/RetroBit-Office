@@ -50,6 +50,7 @@ class FreeDrawView @JvmOverloads constructor(
                 drawBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
                 drawCanvas = Canvas(drawBitmap!!)
                 drawCanvas?.drawColor(Color.TRANSPARENT)
+                if (layers.any { it.strokes.isNotEmpty() }) redrawAll()
             }
         }
     }
